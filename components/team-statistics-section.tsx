@@ -99,11 +99,10 @@ export function TeamStatisticsSection({ teamStats, topScorers, leagueName }: Tea
             <CardContent className="p-6">
               <div className="space-y-4">
                 {topScorers.slice(0, 5).map((scorer, index) => (
-                  <div key={scorer.id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-6 h-6 flex items-center justify-center mr-3 font-bold">{index + 1}.</div>
-                      <div className="flex items-center">
-                        {/* FIX: Add flex-shrink-0 to the image container */}
+                  <div key={scorer.id} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center min-w-0">
+                      <div className="w-6 h-6 flex items-center justify-center mr-3 font-bold shrink-0">{index + 1}.</div>
+                      <div className="flex items-center min-w-0">
                         <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center mr-3 flex-shrink-0">
                           {scorer.image_url ? (
                             <img
@@ -115,8 +114,9 @@ export function TeamStatisticsSection({ teamStats, topScorers, leagueName }: Tea
                             <span className="text-xs">{scorer.position}</span>
                           )}
                         </div>
-                        <div>
-                          <div className="font-medium">
+                        {/* One line per name (long ones are cut with …), so every row is the same height */}
+                        <div className="min-w-0">
+                          <div className="font-medium truncate">
                             {scorer.nickname || scorer.name}
                           </div>
                           <div className="flex items-center text-xs text-gray-400">
@@ -125,7 +125,7 @@ export function TeamStatisticsSection({ teamStats, topScorers, leagueName }: Tea
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4 shrink-0">
                       <div className="text-center">
                         <div className="font-bold text-green-400">{scorer.goals}</div>
                         <div className="text-xs text-gray-400">Goals</div>
@@ -134,6 +134,25 @@ export function TeamStatisticsSection({ teamStats, topScorers, leagueName }: Tea
                         <div className="font-bold text-blue-400">{scorer.assists}</div>
                         <div className="text-xs text-gray-400">Assists</div>
                       </div>
+                    </div>
+                  </div>
+                ))}
+                {/* Always five rows tall: switching league (which can have fewer scorers)
+                    must not change this section's height, or the league table below jumps
+                    on phones, where Safari doesn't keep the scroll position steady. */}
+                {Array.from({ length: Math.max(0, 5 - topScorers.slice(0, 5).length) }, (_, index) => (
+                  <div key={`empty-${index}`} aria-hidden className="invisible flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="w-6 h-6 mr-3" />
+                      <div className="w-8 h-8 mr-3" />
+                      <div>
+                        <div className="font-medium">&nbsp;</div>
+                        <div className="text-xs">&nbsp;</div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold">0</div>
+                      <div className="text-xs">Goals</div>
                     </div>
                   </div>
                 ))}
