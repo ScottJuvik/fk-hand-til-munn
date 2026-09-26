@@ -1,7 +1,5 @@
 "use client"
 
-import { useRef } from "react"
-
 import { cn } from "@/lib/utils"
 import { SlidingIndicator } from "@/components/ui/sliding-indicator"
 
@@ -27,16 +25,13 @@ export function SegmentedControl<T extends string>({
   itemClassName,
   "aria-label": ariaLabel,
 }: SegmentedControlProps<T>) {
-  const groupRef = useRef<HTMLDivElement>(null)
-
   return (
     <div
-      ref={groupRef}
       role="radiogroup"
       aria-label={ariaLabel}
       className={cn("relative inline-flex flex-wrap gap-1 rounded-md border bg-white p-1", className)}
     >
-      <SlidingIndicator container={groupRef} className="rounded bg-gray-900 shadow-sm" />
+      <SlidingIndicator className="rounded bg-gray-900 shadow-sm" />
       {options.map((option) => {
         const active = option.value === value
         return (

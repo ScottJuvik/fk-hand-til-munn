@@ -1,6 +1,6 @@
 "use client"
 
-import { type RefObject, useLayoutEffect, useState } from "react"
+import { type RefObject, useLayoutEffect, useRef, useState } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -12,15 +12,19 @@ interface Rect {
 }
 
 /**
- * Tracks where the active option (`data-state="active"`) sits inside a toggle
- * group, so a highlight can slide to it. Re-measures when the active option
- * changes and when the group resizes or wraps.
+ * Tracks where the active option (`data-state="active"`) sits inside the toggle
+ * group containing `indicator`, so the highlight can slide to it. Re-measures
+ * when the active option changes and when the group resizes or wraps.
+ *
+ * The group is found as the indicator's parent element: a ref on the group
+ * itself isn't attached yet when this first runs (parents get their refs after
+ * their children's effects), which left the highlight unmeasured in production.
  */
-function useActiveRect(container: RefObject<HTMLElement | null>) {
+function useActiveRect(indicator: RefObject<HTMLElement | null>) {
   const [rect, setRect] = useState<Rect | null>(null)
 
   useLayoutEffect(() => {
-    const el = container.current
+    const el = indicator.current?.parentElement
     if (!el) return
     const measure = () => {
       const active = el.querySelector<HTMLElement>('[data-state="active"]')
@@ -39,7 +43,7 @@ function useActiveRect(container: RefObject<HTMLElement | null>) {
       resize.disconnect()
       states.disconnect()
     }
-  }, [container])
+  }, [indicator])
 
   return rect
 }
@@ -49,8 +53,9 @@ function useActiveRect(container: RefObject<HTMLElement | null>) {
  * group (which must be `relative`) and give the options `relative z-10`.
  * It jumps into place on first render, then glides between options.
  */
-export function SlidingIndicator({ container, className }: { container: RefObject<HTMLElement | null>; className?: string }) {
-  const rect = useActiveRect(container)
+export function SlidingIndicator({ className }: { className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const rect = useActiveRect(ref)
   const [placed, setPlaced] = useState(false)
 
   useLayoutEffect(() => {
@@ -63,6 +68,7 @@ export function SlidingIndicator({ container, className }: { container: RefObjec
 
   return (
     <span
+      ref={ref}
       aria-hidden
       className={cn(
         "pointer-events-none absolute z-0",

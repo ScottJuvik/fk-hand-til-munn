@@ -12,24 +12,16 @@ const Tabs = TabsPrimitive.Root
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, children, ...props }, ref) => {
-  const listRef = React.useRef<HTMLDivElement | null>(null)
-  const setRefs = (node: HTMLDivElement | null) => {
-    listRef.current = node
-    if (typeof ref === "function") ref(node)
-    else if (ref) ref.current = node
-  }
-  return (
-    <TabsPrimitive.List
-      ref={setRefs}
-      className={cn("relative inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-500", className)}
-      {...props}
-    >
-      <SlidingIndicator container={listRef} className="rounded-sm bg-white shadow-sm" />
-      {children}
-    </TabsPrimitive.List>
-  )
-})
+>(({ className, children, ...props }, ref) => (
+  <TabsPrimitive.List
+    ref={ref}
+    className={cn("relative inline-flex h-10 items-center justify-center rounded-md bg-gray-100 p-1 text-gray-500", className)}
+    {...props}
+  >
+    <SlidingIndicator className="rounded-sm bg-white shadow-sm" />
+    {children}
+  </TabsPrimitive.List>
+))
 TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
