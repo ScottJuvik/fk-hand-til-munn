@@ -5,9 +5,11 @@ interface EnhancedLeagueTableProps {
   standings: TeamStanding[]
   ourTeam?: string
   leagueName?: string
+  /** Shown under the table, e.g. how a tie on points was decided. */
+  note?: string
 }
 
-export function EnhancedLeagueTable({ standings, ourTeam, leagueName }: EnhancedLeagueTableProps) {
+export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: EnhancedLeagueTableProps) {
   const sortedStandings = [...standings].sort((a, b) => a.position - b.position)
 
   const getPositionColor = (position: number) => {
@@ -165,6 +167,8 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName }: Enhanced
           </div>
         </div>
       )}
+
+      {note && <p className="mt-3 px-1 text-sm italic text-gray-600">{note}</p>}
     </div>
   )
 }

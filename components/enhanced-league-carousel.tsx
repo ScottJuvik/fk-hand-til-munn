@@ -8,6 +8,11 @@ import { useSwipe } from "@/hooks/use-swipe"
 import type { TeamStats } from "@/actions/get-team-statistics"
 import { calculateCleanSheets } from "@/utils/calculate-clean-sheets"
 
+// Notes shown under a league's table, by league id.
+const LEAGUE_NOTES: Record<number, string> = {
+  1: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2, despite a lower goal difference.",
+}
+
 interface EnhancedLeagueCarouselProps {
   leagues: {
     name: string
@@ -180,7 +185,12 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
                     {league.season} - {seasonYear(index)}
                   </p>
                 </div>
-                <EnhancedLeagueTable standings={league.standings} ourTeam={ourTeam} leagueName={league.name} />
+                <EnhancedLeagueTable
+                  standings={league.standings}
+                  ourTeam={ourTeam}
+                  leagueName={league.name}
+                  note={league.id !== undefined ? LEAGUE_NOTES[league.id] : undefined}
+                />
               </div>
             ))}
           </div>
