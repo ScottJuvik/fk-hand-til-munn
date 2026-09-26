@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useCallback } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import type { TeamStanding, MatchData } from "@/actions/get-league-data"
 import { EnhancedLeagueTable } from "./enhanced-league-table"
@@ -25,7 +25,26 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
   const filteredLeagues = leagues.filter((league) => league.standings && league.standings.length > 0)
 
   const [activeIndex, setActiveIndex] = useState(0)
+  // Which way the last switch went (1 = next, -1 = previous), so the new table
+  // slides in from that side.
+  const [direction, setDirection] = useState<1 | -1>(1)
   const carouselRef = useRef<HTMLDivElement>(null)
+
+  // Leagues have different numbers of teams; animate the box's height between
+  // them instead of letting the page below jump.
+  // A callback ref, because the table is remounted on every switch and each new
+  // one needs watching.
+  const [contentHeight, setContentHeight] = useState<number>()
+  const resizeObserver = useRef<ResizeObserver | null>(null)
+  const measureContent = useCallback((el: HTMLDivElement | null) => {
+    resizeObserver.current?.disconnect()
+    if (!el) return
+    // Measure right away (the new table's height is the transition's target),
+    // then keep following it, e.g. when logos load or the window resizes.
+    setContentHeight(el.offsetHeight)
+    resizeObserver.current = new ResizeObserver(() => setContentHeight(el.offsetHeight))
+    resizeObserver.current.observe(el)
+  }, [])
 
   // Helper function to get team stats for a league
   const getTeamStatsForLeague = (leagueIndex: number) => {
@@ -52,6 +71,8 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
 
   // Handle user-triggered index changes
   const changeActiveIndex = (newIndex: number) => {
+    if (newIndex === activeIndex) return
+    setDirection(newIndex > activeIndex ? 1 : -1)
     setActiveIndex(newIndex)
 
     // Only call onLeagueChange when user explicitly changes the index
@@ -63,7 +84,7 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
   }
 
   // Handle swipe gestures
-  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe({
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe({
     onSwipeLeft: () => {
       if (activeIndex < filteredLeagues.length - 1) {
         changeActiveIndex(activeIndex + 1)
@@ -109,15 +130,15 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
     <div
       className="relative"
       ref={carouselRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Mobile swipe instruction */}
       <div className="md:hidden text-center text-sm text-gray-500 mb-2">Swipe to see other leagues</div>
 
       <div className="flex justify-between items-center mb-4">
-        <div>
+        <div key={activeIndex} className="motion-safe:animate-in fade-in slide-in-from-bottom-2 duration-300">
           <h2 className="text-2xl font-bold">{filteredLeagues[activeIndex].name}</h2>
 <p className="text-gray-600">
   {filteredLeagues[activeIndex].season} - {
@@ -149,8 +170,18 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
         </div>
       </div>
 
-      <div className="overflow-hidden">
-        <div className="transition-transform duration-300 ease-in-out">
+      <div
+        className="overflow-hidden transition-[height] duration-500 ease-out motion-reduce:transition-none"
+        style={{ height: contentHeight }}
+      >
+        {/* Remounted per league (key) so the slide-in plays on every switch. */}
+        <div
+          ref={measureContent}
+          key={activeIndex}
+          className={`motion-safe:animate-in fade-in duration-500 ease-out ${
+            direction === 1 ? "slide-in-from-right-16" : "slide-in-from-left-16"
+          }`}
+        >
           <EnhancedLeagueTable
             standings={filteredLeagues[activeIndex].standings}
             ourTeam={ourTeam}
@@ -166,7 +197,7 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
             <button
               key={index}
               onClick={() => changeActiveIndex(index)}
-              className={`w-2 h-2 rounded-full ${index === activeIndex ? "bg-black" : "bg-gray-300"}`}
+              className={`h-2 rounded-full transition-all duration-300 ${index === activeIndex ? "w-6 bg-black" : "w-2 bg-gray-300 hover:bg-gray-400"}`}
               aria-label={`Go to league ${index + 1}`}
             />
           ))}
