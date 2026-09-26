@@ -4,9 +4,7 @@ import { useState, useEffect } from "react"
 import Loading from "./loading"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getLeagueOptions, getLeagueStatistics } from "@/actions/public-data"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, ArrowUpDown, Crown, Search, X } from "lucide-react"
+import { ArrowUpDown, Crown, Search, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -246,14 +244,7 @@ export default function StatisticsPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-12">
       <div className="container mx-auto px-4">
-        <div className="mb-8 flex items-center">
-          <Button variant="outline" size="icon" className="mr-3" asChild>
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold">Player Statistics</h1>
-        </div>
+        <h1 className="mb-8 text-3xl font-bold">Player Statistics</h1>
 
         <Card>
 <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

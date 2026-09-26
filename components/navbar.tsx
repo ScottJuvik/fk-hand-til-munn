@@ -30,17 +30,17 @@ export default function Navbar() {
               <Home className="h-4 w-4 mr-1" />
               Home
             </Link>
-            <Link href="/lineup" className="text-gray-700 hover:text-black font-medium flex items-center">
-              <Users className="h-4 w-4 mr-1" />
-              Lineup
+            <Link href="/statistics" className="text-gray-700 hover:text-black font-medium flex items-center">
+              <BarChart3 className="h-4 w-4 mr-1" />
+              Statistics
             </Link>
             <Link href="/players" className="text-gray-700 hover:text-black font-medium flex items-center">
               <UserRound className="h-4 w-4 mr-1" />
               Players
             </Link>
-            <Link href="/statistics" className="text-gray-700 hover:text-black font-medium flex items-center">
-              <BarChart3 className="h-4 w-4 mr-1" />
-              Statistics
+            <Link href="/lineup" className="text-gray-700 hover:text-black font-medium flex items-center">
+              <Users className="h-4 w-4 mr-1" />
+              Lineup
             </Link>
             <Link href="/band" className="text-gray-700 hover:text-black font-medium flex items-center">
               <Music className="h-4 w-4 mr-1" />
@@ -104,12 +104,12 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/lineup"
+            href="/statistics"
             className="text-base font-medium flex items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
           >
-            <Users className="h-5 w-5 text-gray-500" />
-            Lineup
+            <BarChart3 className="h-5 w-5 text-gray-500" />
+            Statistics
           </Link>
           <Link
             href="/players"
@@ -120,12 +120,12 @@ export default function Navbar() {
             Players
           </Link>
           <Link
-            href="/statistics"
+            href="/lineup"
             className="text-base font-medium flex items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
           >
-            <BarChart3 className="h-5 w-5 text-gray-500" />
-            Statistics
+            <Users className="h-5 w-5 text-gray-500" />
+            Lineup
           </Link>
           <Link
             href="/band"

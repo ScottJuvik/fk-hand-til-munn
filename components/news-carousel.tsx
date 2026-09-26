@@ -76,19 +76,17 @@ export function NewsCarousel({ articles }: NewsCarouselProps) {
         <h2 className="text-3xl font-bold">Latest News</h2>
         <div className="flex space-x-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={handlePrev}
-            className="rounded-full bg-transparent"
             aria-label="Previous news"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={handleNext}
-            className="rounded-full bg-transparent"
             aria-label="Next news"
           >
             <ChevronRight className="h-4 w-4" />
