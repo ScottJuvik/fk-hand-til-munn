@@ -29,6 +29,8 @@ export async function getTopScorersByLeague(leagueId: number): Promise<TopScorer
       `)
       .eq("league", leagueId)
       .order("goals", { ascending: false })
+      // Tied on goals: more assists ranks higher
+      .order("assists", { ascending: false })
       .limit(5)
 
     if (error) {
