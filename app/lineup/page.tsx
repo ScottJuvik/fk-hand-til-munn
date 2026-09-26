@@ -13,7 +13,7 @@ import { Loader2, AlertCircle, Database } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { startingPlayers, substitutePlayers } from "@/data/players"
 import MatchDetails from "@/components/match-details" // Import the MatchDetails component
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { LineupMatchHeader, toMatchHeader, type MatchHeader } from "@/components/lineup-match-header"
 
 // Convert hardcoded player data to the format expected by components
@@ -288,7 +288,7 @@ export default function LineupPage() {
   }, [lineupId, matchId])
 
   if (loading) {
-    return <LoadingSpinner label="Loading lineup" />
+    return <Loading />
   }
 
   if (noActiveLineup && matchId) {

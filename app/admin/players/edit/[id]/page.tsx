@@ -17,7 +17,7 @@ import { PlayerFormTabsList } from "@/components/admin/player-form-tabs-list"
 import { StarRating } from "@/components/star-rating"
 import { adminGetPlayer } from "@/actions/admin-data"
 import type { PlayerWithStats } from "@/types/supabase"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { useAuth } from "@/components/auth-provider"
 import { StatInput } from "@/components/admin/stat-input"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
@@ -253,7 +253,7 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading player" />
+    return <Loading />
   }
 
   if (!player) {

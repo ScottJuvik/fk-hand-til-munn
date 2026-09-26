@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { useToast } from "@/hooks/use-toast"
 import { ImageInput } from "@/components/admin/image-input"
 import { RichTextEditor } from "@/components/admin/rich-text-editor"
@@ -79,7 +79,7 @@ export default function CreateNewsArticle() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading editor" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

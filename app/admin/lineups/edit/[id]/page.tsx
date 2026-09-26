@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { LineupPlayersForm } from "@/components/admin/lineup-players-form"
 import { LineupPreviewDialog } from "@/components/admin/lineup-preview-dialog"
 import { LocationCombobox } from "@/components/admin/location-combobox"
@@ -178,7 +178,7 @@ export default function EditLineup({ params }: { params: { id: string } }) {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading lineup" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

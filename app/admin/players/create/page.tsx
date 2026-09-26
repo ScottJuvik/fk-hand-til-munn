@@ -15,7 +15,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { PlayerFormTabsList } from "@/components/admin/player-form-tabs-list"
 import { Checkbox } from "@/components/ui/checkbox"
 import { StarRating } from "@/components/star-rating"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { StatInput } from "@/components/admin/stat-input"
@@ -149,7 +149,7 @@ export default function CreatePlayer() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading player form" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

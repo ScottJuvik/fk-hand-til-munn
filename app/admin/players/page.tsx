@@ -20,7 +20,7 @@ import {
 import { adminGetPlayers } from "@/actions/admin-data"
 import { formatPlayerName } from "@/utils/format-player-name"
 import type { Player } from "@/types/supabase"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/components/auth-provider"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
@@ -182,7 +182,7 @@ export default function ManagePlayers() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading players" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

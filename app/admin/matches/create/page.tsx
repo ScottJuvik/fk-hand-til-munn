@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { LocationCombobox } from "@/components/admin/location-combobox"
 import { TeamLogo } from "@/components/admin/team-logo"
 import { LeagueBadge } from "@/components/admin/league-badge"
@@ -208,7 +208,7 @@ export default function CreateFixture() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading teams and leagues" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

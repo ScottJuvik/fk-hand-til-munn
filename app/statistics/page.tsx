@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getLeagueOptions, getLeagueStatistics } from "@/actions/public-data"
 import Link from "next/link"
@@ -228,7 +228,7 @@ export default function StatisticsPage() {
   }
 
   if (loading) {
-    return <LoadingSpinner label="Loading player statistics" />
+    return <Loading />
   }
 
   if (error) {

@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SegmentedControl } from "@/components/ui/segmented-control"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import {
   Dialog,
   DialogContent,
@@ -183,7 +183,7 @@ export default function PlayersPage() {
   )
 
   if (loading) {
-    return <LoadingSpinner label="Loading players" />
+    return <Loading />
   }
 
   if (error) {

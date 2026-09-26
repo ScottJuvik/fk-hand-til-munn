@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { LineupPlayersForm } from "@/components/admin/lineup-players-form"
 import { LineupPreviewDialog } from "@/components/admin/lineup-preview-dialog"
 import { LocationCombobox } from "@/components/admin/location-combobox"
@@ -164,7 +164,7 @@ export default function CreateLineup() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading matches and players" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

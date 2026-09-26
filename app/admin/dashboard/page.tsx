@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Users, UserPlus, ListChecks, Newspaper, BarChart3, CalendarClock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { useAuth } from "@/components/auth-provider"
 
 export default function AdminDashboard() {
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   }, [router])
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading dashboard" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

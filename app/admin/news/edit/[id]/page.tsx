@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { adminGetNewsArticle } from "@/actions/admin-data"
 import { useToast } from "@/hooks/use-toast"
 import { ImageInput } from "@/components/admin/image-input"
@@ -107,7 +107,7 @@ export default function EditNewsArticle({ params }: { params: { id: string } }) 
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading article" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { adminGetNewsArticles } from "@/actions/admin-data"
 import { useToast } from "@/hooks/use-toast"
 import type { NewsArticleRow } from "@/types/supabase"
@@ -106,7 +106,7 @@ export default function ManageNews() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading news" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

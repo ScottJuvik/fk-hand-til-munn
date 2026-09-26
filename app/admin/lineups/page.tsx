@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { LeagueBadge, LeagueDivider } from "@/components/admin/league-badge"
 import { Matchup } from "@/components/admin/matchup"
 import { adminGetLineups } from "@/actions/admin-data"
@@ -114,7 +114,7 @@ export default function ManageLineups() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading lineups" />
+    return <Loading />
   }
 
   if (!isAuthorized) {

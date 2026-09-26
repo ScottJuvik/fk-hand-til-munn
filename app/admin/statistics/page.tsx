@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { LoadingSpinner } from "@/components/loading-spinner"
+import Loading from "./loading"
 import { adminGetLeagueStatistics } from "@/actions/admin-data"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
@@ -161,7 +161,7 @@ export default function ManageStatistics() {
   }
 
   if (isLoading) {
-    return <LoadingSpinner label="Loading statistics" />
+    return <Loading />
   }
 
   if (!isAuthorized) {
