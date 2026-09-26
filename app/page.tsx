@@ -162,11 +162,12 @@ export default function HomePage() {
             </h1>
             <p className="text-xl mb-8 max-w-2xl">Burans greatest pride</p>
 
-            {/* Scroll down button */}
+            {/* Scroll down button: right under the tagline on phones (the bottom of the
+                screen can sit behind the browser's toolbar), pinned near the bottom on desktop */}
             <a
               href="#team-stats"
               onClick={handleScroll}
-              className="absolute bottom-32 left-1/2 -translate-x-1/2 text-white font-medium text-lg tracking-wider hover:opacity-50 transition flex flex-col items-center"
+              className="flex flex-col items-center text-white font-medium text-lg tracking-wider hover:opacity-50 transition md:absolute md:bottom-32 md:left-1/2 md:-translate-x-1/2"
             >
               <span className="block w-6 h-6 border-l border-b border-white transform -rotate-45 animate-[sdb05_1.5s_infinite] mb-8" />
               <span className="text-sm">Scroll</span>
