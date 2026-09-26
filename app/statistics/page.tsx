@@ -248,33 +248,7 @@ export default function StatisticsPage() {
 
         <Card>
 <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-    <div className="flex items-center gap-4">
-        {/* Dropdown Menu (left) */}
-        <Select
-            value={selectedLeagueId ? String(selectedLeagueId) : ""}
-            onValueChange={(value) => setSelectedLeagueId(Number(value))}
-        >
-            <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select a league" />
-            </SelectTrigger>
-            <SelectContent>
-                {leagues.map((league) => (
-                    <SelectItem key={league.id} value={String(league.id)}>
-                        {`${league.name} - ${league.year}`}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
-    </div>
-
-    {/* Centered League Header */}
-    <div className="flex-1 flex justify-center items-center">
-        <CardTitle>
-            {leagueInfo ? `${leagueInfo.name} - ${leagueInfo.year}` : "Select a League"}
-        </CardTitle>
-    </div>
-
-    {/* Search bar (right); invisible for untracked seasons so the title stays centered */}
+    {/* Search bar (left); invisible for untracked seasons so the title stays centered */}
     <div className={`relative w-full sm:w-64 ${isUntrackedSeason ? "invisible" : ""}`}>
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
         <Input
@@ -291,6 +265,32 @@ export default function StatisticsPage() {
                 <X className="h-4 w-4" />
             </button>
         )}
+    </div>
+
+    {/* Centered League Header */}
+    <div className="flex-1 flex justify-center items-center">
+        <CardTitle>
+            {leagueInfo ? `${leagueInfo.name} - ${leagueInfo.year}` : "Select a League"}
+        </CardTitle>
+    </div>
+
+    <div className="flex items-center gap-4">
+        {/* League dropdown (right) */}
+        <Select
+            value={selectedLeagueId ? String(selectedLeagueId) : ""}
+            onValueChange={(value) => setSelectedLeagueId(Number(value))}
+        >
+            <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select a league" />
+            </SelectTrigger>
+            <SelectContent>
+                {leagues.map((league) => (
+                    <SelectItem key={league.id} value={String(league.id)}>
+                        {`${league.name} - ${league.year}`}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
     </div>
 </CardHeader>
           <CardContent className="px-2 sm:px-6">
