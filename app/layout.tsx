@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { cookies } from "next/headers"
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth"
 import { INTRO_SEEN_SCRIPT } from "@/lib/intro-seen"
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -49,6 +50,7 @@ export default async function RootLayout({
             </ScrollToTop>
           </ThemeProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   )
