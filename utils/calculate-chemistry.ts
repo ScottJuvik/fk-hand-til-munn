@@ -33,8 +33,12 @@ export function calculatePositionChemistry(
     GK: [],
   }
 
-  // Off position, but in a related spot they link to (e.g. a CB at RB)
-  if (similarPositions[primaryPosition]?.includes(currentPosition)) {
+  // Off position, but in a related spot they link to (e.g. a CB at RB). Checked both
+  // ways, so a pair only needs listing once (CAM at ST counts, as ST lists CAM).
+  if (
+    similarPositions[primaryPosition]?.includes(currentPosition) ||
+    similarPositions[currentPosition]?.includes(primaryPosition)
+  ) {
     return { chemistry: 3, label: "Weak" }
   }
 
