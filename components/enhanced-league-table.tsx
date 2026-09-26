@@ -7,9 +7,13 @@ interface EnhancedLeagueTableProps {
   leagueName?: string
   /** Shown under the table, e.g. how a tie on points was decided. */
   note?: string
+  /** Mark the table's winner (1st place) as champions with a gold bar and legend chip. */
+  champions?: boolean
 }
 
-export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: EnhancedLeagueTableProps) {
+const CHAMPIONS_GOLD = "#D4AF37"
+
+export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note, champions = false }: EnhancedLeagueTableProps) {
   const sortedStandings = [...standings].sort((a, b) => a.position - b.position)
 
   const getPositionColor = (position: number) => {
@@ -22,6 +26,13 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: En
 
   const isAvdelingA = leagueName === "Avdeling A"
   const isAvdelingB = leagueName === "Avdeling B"
+
+  // Coloured bar on the left of a row: the sluttspill it leads to (Avdeling A/B),
+  // or gold for the champions.
+  const rowBar = (position: number, width: number) => {
+    const colour = champions && position === 1 ? CHAMPIONS_GOLD : isAvdelingA || isAvdelingB ? getPositionColor(position) : null
+    return colour ? { boxShadow: `inset ${width}px 0 0 0 ${colour}` } : undefined
+  }
 
   return (
     <div className="w-full">
@@ -45,13 +56,12 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: En
           <tbody>
             {sortedStandings.map((team) => {
               const isOurTeam = team.teamName === ourTeam || team.teamName.includes("FK Hånd til Munn")
-              const showClassification = isAvdelingA || isAvdelingB
 
               return (
                 <tr key={team.teamId} className={isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}>
                   <td
                     className="py-3 px-4 border-b"
-                    style={showClassification ? { boxShadow: `inset 5px 0 0 0 ${getPositionColor(team.position)}` } : undefined}
+                    style={rowBar(team.position, 5)}
                   >
                     {team.position}
                   </td>
@@ -104,13 +114,12 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: En
           <tbody>
             {sortedStandings.map((team) => {
               const isOurTeam = team.teamName === ourTeam || team.teamName.includes("FK Hånd til Munn")
-              const showClassification = isAvdelingA || isAvdelingB
 
               return (
                 <tr key={team.teamId} className={isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}>
                   <td
                     className="py-2 px-2 border-b"
-                    style={showClassification ? { boxShadow: `inset 4px 0 0 0 ${getPositionColor(team.position)}` } : undefined}
+                    style={rowBar(team.position, 4)}
                   >
                     {team.position}
                   </td>
@@ -165,6 +174,13 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName, note }: En
             <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: "#f29a9a" }} />
             E-sluttspill
           </div>
+        </div>
+      )}
+
+      {champions && (
+        <div className="flex items-center gap-2 mt-4 px-1 text-sm text-gray-600">
+          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: CHAMPIONS_GOLD }} />
+          Champions
         </div>
       )}
 

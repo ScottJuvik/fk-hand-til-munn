@@ -8,9 +8,13 @@ import { useSwipe } from "@/hooks/use-swipe"
 import type { TeamStats } from "@/actions/get-team-statistics"
 import { calculateCleanSheets } from "@/utils/calculate-clean-sheets"
 
-// Notes shown under a league's table, by league id.
-const LEAGUE_NOTES: Record<number, string> = {
-  1: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2.",
+// Extras for a league's table, by league id: a note underneath, and whether its
+// winner is marked as champions.
+const LEAGUE_EXTRAS: Record<number, { note?: string; champions?: boolean }> = {
+  1: {
+    note: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2.",
+    champions: true,
+  },
 }
 
 interface EnhancedLeagueCarouselProps {
@@ -45,9 +49,10 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
     resizeObserver.current.observe(el)
   }, [])
 
-  // Season year shown under each league's name.
-  const seasonYear = (index: number) =>
-    index === 1 || index === 3 ? 2025 : index === 2 ? 2024 : new Date().getFullYear()
+  // Season year shown under each league's name, by position in the carousel
+  // (current season, Avdeling B, C-sluttspill, Avdeling A).
+  const SEASON_YEARS = [new Date().getFullYear(), 2025, 2024, 2023]
+  const seasonYear = (index: number) => SEASON_YEARS[index] ?? new Date().getFullYear()
 
   // Helper function to get team stats for a league
   const getTeamStatsForLeague = (leagueIndex: number) => {
@@ -189,7 +194,8 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
                   standings={league.standings}
                   ourTeam={ourTeam}
                   leagueName={league.name}
-                  note={league.id !== undefined ? LEAGUE_NOTES[league.id] : undefined}
+                  note={league.id !== undefined ? LEAGUE_EXTRAS[league.id]?.note : undefined}
+                  champions={league.id !== undefined && !!LEAGUE_EXTRAS[league.id]?.champions}
                 />
               </div>
             ))}
