@@ -10,7 +10,7 @@ import { calculateCleanSheets } from "@/utils/calculate-clean-sheets"
 
 // Notes shown under a league's table, by league id.
 const LEAGUE_NOTES: Record<number, string> = {
-  1: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2, despite a lower goal difference.",
+  1: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2.",
 }
 
 interface EnhancedLeagueCarouselProps {
