@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Edit, Trash2, Plus, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { Trash2, Plus, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -287,12 +287,7 @@ export default function ManagePlayers() {
                   </TableCell>
                   <TableCell className="px-2 sm:px-4 text-right">
                     <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                      {/* On phones the row itself opens the editor, so only delete is shown. */}
-                      <Button variant="outline" size="icon" className="hidden sm:inline-flex" asChild>
-                        <Link href={`/admin/players/edit/${player.id}`}>
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
+                      {/* The row itself opens the editor, so only delete is shown. */}
                       <Button variant="destructive" size="icon" onClick={() => handleDeleteClick(player.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>

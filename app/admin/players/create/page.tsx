@@ -19,6 +19,7 @@ import Loading from "./loading"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { StatInput } from "@/components/admin/stat-input"
+import { DetailedStatInputs } from "@/components/admin/detailed-stat-inputs"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 
 const DEFAULT_STAT = 75
@@ -389,34 +390,7 @@ export default function CreatePlayer() {
                 </TabsContent>
 
                 <TabsContent value="detailed" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatInput statKey="acceleration" label="Acceleration" value={formData.stats.acceleration} onChange={handleStatChange} />
-                    <StatInput statKey="sprint_speed" label="Sprint Speed" value={formData.stats.sprint_speed} onChange={handleStatChange} />
-                    <StatInput statKey="positioning" label="Positioning" value={formData.stats.positioning} onChange={handleStatChange} />
-                    <StatInput statKey="finishing" label="Finishing" value={formData.stats.finishing} onChange={handleStatChange} />
-                    <StatInput statKey="shot_power" label="Shot Power" value={formData.stats.shot_power} onChange={handleStatChange} />
-                    <StatInput statKey="long_shots" label="Long Shots" value={formData.stats.long_shots} onChange={handleStatChange} />
-                    <StatInput statKey="vision" label="Vision" value={formData.stats.vision} onChange={handleStatChange} />
-                    <StatInput statKey="crossing" label="Crossing" value={formData.stats.crossing} onChange={handleStatChange} />
-                    <StatInput statKey="free_kick" label="Free Kick" value={formData.stats.free_kick} onChange={handleStatChange} />
-                    <StatInput statKey="short_passing" label="Short Passing" value={formData.stats.short_passing} onChange={handleStatChange} />
-                    <StatInput statKey="long_passing" label="Long Passing" value={formData.stats.long_passing} onChange={handleStatChange} />
-                    <StatInput statKey="curve" label="Curve" value={formData.stats.curve} onChange={handleStatChange} />
-                    <StatInput statKey="agility" label="Agility" value={formData.stats.agility} onChange={handleStatChange} />
-                    <StatInput statKey="balance" label="Balance" value={formData.stats.balance} onChange={handleStatChange} />
-                    <StatInput statKey="reactions" label="Reactions" value={formData.stats.reactions} onChange={handleStatChange} />
-                    <StatInput statKey="ball_control" label="Ball Control" value={formData.stats.ball_control} onChange={handleStatChange} />
-                    <StatInput statKey="composure" label="Composure" value={formData.stats.composure} onChange={handleStatChange} />
-                    <StatInput statKey="interceptions" label="Interceptions" value={formData.stats.interceptions} onChange={handleStatChange} />
-                    <StatInput statKey="heading_accuracy" label="Heading Accuracy" value={formData.stats.heading_accuracy} onChange={handleStatChange} />
-                    <StatInput statKey="marking" label="Marking" value={formData.stats.marking} onChange={handleStatChange} />
-                    <StatInput statKey="standing_tackle" label="Standing Tackle" value={formData.stats.standing_tackle} onChange={handleStatChange} />
-                    <StatInput statKey="sliding_tackle" label="Sliding Tackle" value={formData.stats.sliding_tackle} onChange={handleStatChange} />
-                    <StatInput statKey="jumping" label="Jumping" value={formData.stats.jumping} onChange={handleStatChange} />
-                    <StatInput statKey="stamina" label="Stamina" value={formData.stats.stamina} onChange={handleStatChange} />
-                    <StatInput statKey="strength" label="Strength" value={formData.stats.strength} onChange={handleStatChange} />
-                    <StatInput statKey="aggression" label="Aggression" value={formData.stats.aggression} onChange={handleStatChange} />
-                  </div>
+                  <DetailedStatInputs stats={formData.stats} onChange={handleStatChange} />
                 </TabsContent>
               </Tabs>
 

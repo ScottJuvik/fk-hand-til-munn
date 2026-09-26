@@ -20,6 +20,7 @@ import type { PlayerWithStats } from "@/types/supabase"
 import Loading from "./loading"
 import { useAuth } from "@/components/auth-provider"
 import { StatInput } from "@/components/admin/stat-input"
+import { DetailedStatInputs } from "@/components/admin/detailed-stat-inputs"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 
 export default function EditPlayer({ params }: { params: { id: string } }) {
@@ -502,16 +503,7 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
                 </TabsContent>
 
                 <TabsContent value="detailed" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <StatInput statKey="acceleration" label="Acceleration" value={formData.stats.acceleration} onChange={handleStatChange} />
-                    <StatInput statKey="sprint_speed" label="Sprint Speed" value={formData.stats.sprint_speed} onChange={handleStatChange} />
-                    <StatInput statKey="positioning" label="Positioning" value={formData.stats.positioning} onChange={handleStatChange} />
-                    <StatInput statKey="finishing" label="Finishing" value={formData.stats.finishing} onChange={handleStatChange} />
-                    <StatInput statKey="shot_power" label="Shot Power" value={formData.stats.shot_power} onChange={handleStatChange} />
-                    <StatInput statKey="long_shots" label="Long Shots" value={formData.stats.long_shots} onChange={handleStatChange} />
-                    {/* Add more detailed stats here */}
-                    {/* For brevity, I'm not including all stats, but you would add them all here */}
-                  </div>
+                  <DetailedStatInputs stats={formData.stats} onChange={handleStatChange} />
                 </TabsContent>
               </Tabs>
 
