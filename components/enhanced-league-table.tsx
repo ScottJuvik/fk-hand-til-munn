@@ -7,11 +7,6 @@ interface EnhancedLeagueTableProps {
   leagueName?: string
 }
 
-// Rows fade up one after another when a table appears (on load and on each
-// league switch, since the carousel remounts the table).
-const ROW_ENTER = "motion-safe:animate-in fade-in slide-in-from-bottom-2 fill-mode-both duration-500 ease-out"
-const rowDelay = (index: number) => ({ animationDelay: `${Math.min(index, 12) * 35}ms` })
-
 export function EnhancedLeagueTable({ standings, ourTeam, leagueName }: EnhancedLeagueTableProps) {
   const sortedStandings = [...standings].sort((a, b) => a.position - b.position)
 
@@ -46,16 +41,12 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName }: Enhanced
             </tr>
           </thead>
           <tbody>
-            {sortedStandings.map((team, i) => {
+            {sortedStandings.map((team) => {
               const isOurTeam = team.teamName === ourTeam || team.teamName.includes("FK Hånd til Munn")
               const showClassification = isAvdelingA || isAvdelingB
 
               return (
-                <tr
-                  key={team.teamId}
-                  className={`${ROW_ENTER} ${isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}`}
-                  style={rowDelay(i)}
-                >
+                <tr key={team.teamId} className={isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}>
                   <td
                     className="py-3 px-4 border-b"
                     style={showClassification ? { boxShadow: `inset 5px 0 0 0 ${getPositionColor(team.position)}` } : undefined}
@@ -109,16 +100,12 @@ export function EnhancedLeagueTable({ standings, ourTeam, leagueName }: Enhanced
             </tr>
           </thead>
           <tbody>
-            {sortedStandings.map((team, i) => {
+            {sortedStandings.map((team) => {
               const isOurTeam = team.teamName === ourTeam || team.teamName.includes("FK Hånd til Munn")
               const showClassification = isAvdelingA || isAvdelingB
 
               return (
-                <tr
-                  key={team.teamId}
-                  className={`${ROW_ENTER} ${isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}`}
-                  style={rowDelay(i)}
-                >
+                <tr key={team.teamId} className={isOurTeam ? "font-bold bg-gray-100" : "hover:bg-gray-50"}>
                   <td
                     className="py-2 px-2 border-b"
                     style={showClassification ? { boxShadow: `inset 4px 0 0 0 ${getPositionColor(team.position)}` } : undefined}

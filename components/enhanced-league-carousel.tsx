@@ -25,26 +25,24 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
   const filteredLeagues = leagues.filter((league) => league.standings && league.standings.length > 0)
 
   const [activeIndex, setActiveIndex] = useState(0)
-  // Which way the last switch went (1 = next, -1 = previous), so the new table
-  // slides in from that side.
-  const [direction, setDirection] = useState<1 | -1>(1)
   const carouselRef = useRef<HTMLDivElement>(null)
 
-  // Leagues have different numbers of teams; animate the box's height between
-  // them instead of letting the page below jump.
-  // A callback ref, because the table is remounted on every switch and each new
-  // one needs watching.
-  const [contentHeight, setContentHeight] = useState<number>()
+  // The slider is as tall as the league on screen; leagues have different
+  // numbers of teams, so the height eases along with the slide. Measured via
+  // a callback ref on the active panel (it moves to the new panel on a switch).
+  const [panelHeight, setPanelHeight] = useState<number>()
   const resizeObserver = useRef<ResizeObserver | null>(null)
-  const measureContent = useCallback((el: HTMLDivElement | null) => {
+  const measureActivePanel = useCallback((el: HTMLDivElement | null) => {
     resizeObserver.current?.disconnect()
     if (!el) return
-    // Measure right away (the new table's height is the transition's target),
-    // then keep following it, e.g. when logos load or the window resizes.
-    setContentHeight(el.offsetHeight)
-    resizeObserver.current = new ResizeObserver(() => setContentHeight(el.offsetHeight))
+    setPanelHeight(el.offsetHeight)
+    resizeObserver.current = new ResizeObserver(() => setPanelHeight(el.offsetHeight))
     resizeObserver.current.observe(el)
   }, [])
+
+  // Season year shown under each league's name.
+  const seasonYear = (index: number) =>
+    index === 1 || index === 3 ? 2025 : index === 2 ? 2024 : new Date().getFullYear()
 
   // Helper function to get team stats for a league
   const getTeamStatsForLeague = (leagueIndex: number) => {
@@ -71,8 +69,6 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
 
   // Handle user-triggered index changes
   const changeActiveIndex = (newIndex: number) => {
-    if (newIndex === activeIndex) return
-    setDirection(newIndex > activeIndex ? 1 : -1)
     setActiveIndex(newIndex)
 
     // Only call onLeagueChange when user explicitly changes the index
@@ -137,20 +133,9 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
       {/* Mobile swipe instruction */}
       <div className="md:hidden text-center text-sm text-gray-500 mb-2">Swipe to see other leagues</div>
 
-      <div className="flex justify-between items-center mb-4">
-        <div key={activeIndex} className="motion-safe:animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <h2 className="text-2xl font-bold">{filteredLeagues[activeIndex].name}</h2>
-<p className="text-gray-600">
-  {filteredLeagues[activeIndex].season} - {
-    activeIndex === 1 || activeIndex === 3 
-      ? 2025 
-      : activeIndex === 2 
-        ? 2024 
-        : new Date().getFullYear()
-  }
-</p>
-        </div>
-        <div className="flex space-x-2">
+      <div className="relative">
+        {/* Arrows stay put (level with the league name) while the leagues slide underneath them. */}
+        <div className="absolute right-0 top-2.5 z-10 flex space-x-2">
           <button
             onClick={goToPrevious}
             disabled={activeIndex === 0}
@@ -168,25 +153,37 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
             <ChevronRight size={20} />
           </button>
         </div>
-      </div>
 
-      <div
-        className="overflow-hidden transition-[height] duration-500 ease-out motion-reduce:transition-none"
-        style={{ height: contentHeight }}
-      >
-        {/* Remounted per league (key) so the slide-in plays on every switch. */}
+        {/* Every league sits side by side on a track; switching slides the whole
+            league (name, season and table) across, the old one out as the new one comes in. */}
         <div
-          ref={measureContent}
-          key={activeIndex}
-          className={`motion-safe:animate-in fade-in duration-500 ease-out ${
-            direction === 1 ? "slide-in-from-right-16" : "slide-in-from-left-16"
-          }`}
+          className="overflow-hidden transition-[height] duration-500 ease-in-out motion-reduce:transition-none"
+          style={{ height: panelHeight }}
         >
-          <EnhancedLeagueTable
-            standings={filteredLeagues[activeIndex].standings}
-            ourTeam={ourTeam}
-            leagueName={filteredLeagues[activeIndex].name}
-          />
+          <div
+            className="flex items-start transition-transform duration-500 ease-in-out motion-reduce:transition-none"
+            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          >
+            {filteredLeagues.map((league, index) => (
+              <div
+                key={league.id ?? league.name}
+                ref={index === activeIndex ? measureActivePanel : undefined}
+                className="w-full shrink-0"
+                aria-hidden={index !== activeIndex}
+                // Off-screen leagues can't be tabbed into. Next 14 renders with its bundled
+                // React 18, which only passes `inert` through as a string.
+                {...({ inert: index !== activeIndex ? "" : undefined } as object)}
+              >
+                <div className="mb-4 pr-24">
+                  <h2 className="text-2xl font-bold">{league.name}</h2>
+                  <p className="text-gray-600">
+                    {league.season} - {seasonYear(index)}
+                  </p>
+                </div>
+                <EnhancedLeagueTable standings={league.standings} ourTeam={ourTeam} leagueName={league.name} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -197,7 +194,7 @@ export function EnhancedLeagueCarousel({ leagues, ourTeam, onLeagueChange }: Enh
             <button
               key={index}
               onClick={() => changeActiveIndex(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${index === activeIndex ? "w-6 bg-black" : "w-2 bg-gray-300 hover:bg-gray-400"}`}
+              className={`w-2 h-2 rounded-full ${index === activeIndex ? "bg-black" : "bg-gray-300"}`}
               aria-label={`Go to league ${index + 1}`}
             />
           ))}
