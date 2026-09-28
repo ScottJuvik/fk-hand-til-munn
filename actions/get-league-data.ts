@@ -362,7 +362,7 @@ export async function getUpcomingMatches(leagueId?: number, limit?: number, team
           homeTeamId: match.home_team.id,
           homeTeamLogo: match.home_team.logo_url,
           awayTeam: match.away_team.name,
-          awayTeamId: match.away_team_id,
+          awayTeamId: match.away_team.id,
           awayTeamLogo: match.away_team.logo_url,
           homeScore: match.home_score,
           awayScore: match.away_score,
