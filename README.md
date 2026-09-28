@@ -1,6 +1,6 @@
 # FK Hånd til Munn
 
-The website for FK Hånd til Munn, a Norwegian amateur football club, and for Band til Munn, the club's own band.
+The website for FK Hånd til Munn, a Norwegian student football club, and for Band til Munn, the club's own band.
 
 **Live:** [fkhandtilmunn.com](https://fkhandtilmunn.com)
 
