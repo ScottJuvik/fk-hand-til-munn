@@ -24,6 +24,7 @@ import Loading from "./loading"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/components/auth-provider"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { useToast } from "@/hooks/use-toast"
 
 type SortKey = "id" | "name" | "position" | "rating" | "shirt_number" | "status"
 
@@ -44,6 +45,7 @@ const displayName = (player: Player) =>
 
 export default function ManagePlayers() {
   const router = useRouter()
+  const { toast } = useToast()
   const { userRole } = useAuth()
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -164,19 +166,26 @@ export default function ManagePlayers() {
 
   const confirmDelete = async () => {
     if (playerToDelete !== null) {
+      const name = players.find((player) => player.id === playerToDelete)?.name
       try {
         const response = await fetch(`/api/players/${playerToDelete}`, { method: "DELETE" })
         if (!response.ok) {
-          console.error("Error deleting player:", await response.text())
-          return
+          const data = await response.json().catch(() => ({}))
+          throw new Error(data.error || "Failed to delete player")
         }
 
         // Update local state
         setPlayers(players.filter((player) => player.id !== playerToDelete))
         setDeleteDialogOpen(false)
         setPlayerToDelete(null)
+        toast({ title: "Player deleted", description: name ? `${name} was removed.` : undefined })
       } catch (error) {
-        console.error("Error:", error)
+        console.error("Error deleting player:", error)
+        toast({
+          title: "Failed to delete player",
+          description: error instanceof Error ? error.message : "Please try again.",
+          variant: "destructive",
+        })
       }
     }
   }
