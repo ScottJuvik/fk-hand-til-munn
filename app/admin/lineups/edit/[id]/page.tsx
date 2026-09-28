@@ -40,6 +40,8 @@ export default function EditLineup({ params }: { params: { id: string } }) {
   const [substituteIds, setSubstituteIds] = useState<number[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
+  // Sent with the save, so it's refused if someone else changed the lineup meanwhile.
+  const [version, setVersion] = useState<string | null>(null)
 
   useEffect(() => {
     if (userRole !== "admin") {
@@ -61,6 +63,7 @@ export default function EditLineup({ params }: { params: { id: string } }) {
           return
         }
 
+        setVersion(lineup.updated_at)
         setPlayers(playerData || [])
         setFormation(lineup.formation)
         setMatchDate(lineup.match_date || "")
@@ -158,6 +161,7 @@ export default function EditLineup({ params }: { params: { id: string } }) {
             position: players.find((p) => p.id === playerId)?.position || "SUB",
             position_order: positions.length + index + 1,
           })),
+          version,
         }),
       })
 
@@ -170,8 +174,9 @@ export default function EditLineup({ params }: { params: { id: string } }) {
       router.push("/admin/lineups")
     } catch (err) {
       console.error("Error updating lineup:", err)
-      setError("Failed to update lineup. Please try again.")
-      toast({ title: "Failed to update lineup", description: "Please try again.", variant: "destructive" })
+      const message = err instanceof Error ? err.message : "Please try again."
+      setError(`Failed to update lineup. ${message}`)
+      toast({ title: "Failed to update lineup", description: message, variant: "destructive" })
     } finally {
       setIsSaving(false)
     }

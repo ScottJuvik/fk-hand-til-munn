@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerSupabaseClient } from "@/lib/supabase"
+import { editConflictResponse } from "@/lib/edit-conflict"
 
 // Uses the service-role client for the same reason as POST /api/lineups:
 // the anon role hits "infinite recursion detected in policy for relation
@@ -15,10 +16,27 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const data = await request.json()
     const { name, formation, match_date, location, match_id, is_active, starters, substitutes } = data
+    // The lineup's `updated_at` when the edit page loaded.
+    const version: string | undefined = data.version
 
     if (!Array.isArray(starters) || starters.length === 0) {
       return NextResponse.json({ error: "A full starting XI is required" }, { status: 400 })
     }
+
+    // The lineup goes first: if someone else changed it since the page
+    // loaded, nothing is saved, the match included. Setting updated_at bumps
+    // the version even when only the players (lineup_players) change.
+    let lineupUpdate = supabase
+      .from("lineups")
+      .update({ name, formation, match_date, is_active, updated_at: new Date().toISOString() })
+      .eq("id", lineupId)
+    if (version) lineupUpdate = lineupUpdate.eq("updated_at", version)
+    const { data: updatedLineups, error: lineupError } = await lineupUpdate.select("id")
+
+    if (lineupError) {
+      return NextResponse.json({ error: lineupError.message }, { status: 500 })
+    }
+    if (version && updatedLineups.length === 0) return editConflictResponse()
 
     if (match_id && (match_date || location)) {
       const matchUpdate: Record<string, string> = {}
@@ -29,15 +47,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       if (matchError) {
         return NextResponse.json({ error: matchError.message }, { status: 500 })
       }
-    }
-
-    const { error: lineupError } = await supabase
-      .from("lineups")
-      .update({ name, formation, match_date, is_active })
-      .eq("id", lineupId)
-
-    if (lineupError) {
-      return NextResponse.json({ error: lineupError.message }, { status: 500 })
     }
 
     if (is_active) {

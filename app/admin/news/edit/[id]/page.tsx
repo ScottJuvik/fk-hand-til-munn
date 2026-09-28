@@ -32,6 +32,8 @@ export default function EditNewsArticle({ params }: { params: { id: string } }) 
   const [image, setImage] = useState("")
   const [author, setAuthor] = useState("")
   const [publishedAt, setPublishedAt] = useState("")
+  // Sent with the save, so it's refused if someone else changed the article meanwhile.
+  const [version, setVersion] = useState<string | null>(null)
 
   useEffect(() => {
     if (userRole !== "admin") {
@@ -52,6 +54,7 @@ export default function EditNewsArticle({ params }: { params: { id: string } }) 
           return
         }
 
+        setVersion(data.updated_at)
         setTitle(data.title)
         setExcerpt(data.excerpt)
         setContent(data.content)
@@ -84,6 +87,7 @@ export default function EditNewsArticle({ params }: { params: { id: string } }) 
           author,
           published_at: publishedAt,
           status,
+          version,
         }),
       })
 

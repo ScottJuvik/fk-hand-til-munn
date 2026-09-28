@@ -1,28 +1,36 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerSupabaseClient } from "@/lib/supabase"
+import { editConflictResponse } from "@/lib/edit-conflict"
 
 const supabase = createServerSupabaseClient()
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const matchId = params.id
-    const { homeScore, awayScore, played } = await request.json()
+    // `version` is the match's `updated_at` when the admin page loaded it.
+    const { homeScore, awayScore, played, version } = await request.json()
 
-    // Update match
-    const { data: match, error: matchError } = await supabase
+    // Update match (updated_at is set by a database trigger), but only if
+    // nobody changed it since the page loaded.
+    let matchUpdate = supabase
       .from("matches")
       .update({
         home_score: homeScore,
         away_score: awayScore,
         played: played,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", matchId)
+    if (version) matchUpdate = matchUpdate.eq("updated_at", version)
+    const { data: match, error: matchError } = await matchUpdate
       .select("*, league:league_id(*), home_team:home_team_id(*), away_team:away_team_id(*)")
-      .single()
+      .maybeSingle()
 
     if (matchError) {
       return NextResponse.json({ error: `Error updating match: ${matchError.message}` }, { status: 500 })
+    }
+    if (!match) {
+      if (version) return editConflictResponse()
+      return NextResponse.json({ error: "Match not found" }, { status: 404 })
     }
 
     // Recalculate standings for the league
