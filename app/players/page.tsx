@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import { getPlayersPageData } from "@/actions/public-data"
 import type { PlayerWithStats } from "@/types/supabase"
 import { PlayerCard } from "@/components/player-card"
+import { StatChangeTicker } from "@/components/stat-change-ticker"
 import { AlertCircle, Search } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -199,7 +200,7 @@ export default function PlayersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12">
+    <div className="min-h-screen bg-gray-100 pb-12">
       <Dialog open={missingCard !== null} onOpenChange={(open) => !open && setMissingCard(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -212,7 +213,9 @@ export default function PlayersPage() {
         </DialogContent>
       </Dialog>
 
-      <div className="container mx-auto px-4">
+      <StatChangeTicker />
+
+      <div className="container mx-auto px-4 pt-12">
         <div className="max-w-6xl mx-auto">
 
           {/* Header + Search/Filter */}

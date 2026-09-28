@@ -1,0 +1,42 @@
+// Display names for the player numbers recorded in `player_stat_changes`
+// and shown in the ticker on /players. The database triggers decide what's
+// recorded (supabase/player-stat-changes.sql); keep the two lists in sync.
+export const STAT_LABELS: Record<string, string> = {
+  // players
+  rating: "Rating",
+  weak_foot: "Weak foot",
+  skill_moves: "Skill moves",
+  // player_stats
+  pace: "Pace",
+  shooting: "Shooting",
+  passing: "Passing",
+  dribbling: "Dribbling",
+  defending: "Defending",
+  physical: "Physical",
+  acceleration: "Acceleration",
+  sprint_speed: "Sprint speed",
+  positioning: "Positioning",
+  finishing: "Finishing",
+  shot_power: "Shot power",
+  long_shots: "Long shots",
+  vision: "Vision",
+  crossing: "Crossing",
+  free_kick: "Free kick",
+  short_passing: "Short passing",
+  long_passing: "Long passing",
+  curve: "Curve",
+  agility: "Agility",
+  balance: "Balance",
+  reactions: "Reactions",
+  ball_control: "Ball control",
+  composure: "Composure",
+  interceptions: "Interceptions",
+  heading_accuracy: "Heading accuracy",
+  marking: "Marking",
+  standing_tackle: "Standing tackle",
+  sliding_tackle: "Sliding tackle",
+  jumping: "Jumping",
+  stamina: "Stamina",
+  strength: "Strength",
+  aggression: "Aggression",
+}

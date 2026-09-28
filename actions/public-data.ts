@@ -85,6 +85,38 @@ export async function getPlayersPageData() {
   }
 }
 
+export interface PlayerStatChangeItem {
+  id: number
+  player_id: number
+  player_name: string
+  stat: string
+  old_value: number
+  new_value: number
+  created_at: string
+}
+
+/** Player stat changes from the last 24 hours, newest first, for the ticker on /players. */
+export async function getRecentStatChanges(limit = 30): Promise<PlayerStatChangeItem[]> {
+  const supabase = createServerSupabaseClient()
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { data, error } = await supabase
+    .from("player_stat_changes")
+    .select("id, player_id, stat, old_value, new_value, created_at, player:player_id(name)")
+    .gte("created_at", since)
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(Math.min(Math.max(Math.trunc(Number(limit)) || 30, 1), 50))
+  // The ticker is extra, so a failure (or the table not existing yet) just hides it.
+  if (publicError("Loading player stat changes", error)) return []
+  const rows = (data ?? []) as unknown as (Omit<PlayerStatChangeItem, "player_name"> & {
+    player: { name: string } | null
+  })[]
+  return rows.map(({ player, ...change }) => ({
+    ...change,
+    player_name: player?.name ?? "Unknown player",
+  }))
+}
+
 /** A lineup by id, or the newest active lineup when no id is given. */
 export async function getLineup(lineupId?: number | string | null) {
   const supabase = createServerSupabaseClient()
