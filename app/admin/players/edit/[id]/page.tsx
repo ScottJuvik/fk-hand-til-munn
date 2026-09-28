@@ -31,6 +31,8 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [player, setPlayer] = useState<PlayerWithStats | null>(null)
+  // Sent with the save, so it's refused if someone else changed the player meanwhile.
+  const [version, setVersion] = useState<{ player: string; stats: string | null } | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     position: "",
@@ -99,6 +101,7 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
           console.error("Error fetching player:", playerError)
           return
         }
+        setVersion({ player: playerData.updated_at, stats: statsData?.updated_at ?? null })
 
         // New players may not have a player_stats row
         // yet, so fall back to a neutral default rather than failing to
@@ -239,7 +242,7 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, version }),
       })
 
       if (!response.ok) {

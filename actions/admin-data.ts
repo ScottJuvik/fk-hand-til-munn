@@ -16,6 +16,7 @@ const MATCH_SELECT = `
   location,
   home_score,
   away_score,
+  updated_at,
   home_team:home_team_id(id, name, short_name, logo_url),
   away_team:away_team_id(id, name, short_name, logo_url),
   league:league_id(id, name, year)

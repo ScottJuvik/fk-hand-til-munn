@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createServerSupabaseClient } from "@/lib/supabase"
+import { editConflictResponse } from "@/lib/edit-conflict"
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -11,12 +12,23 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const data = await request.json()
+    // The `updated_at` of the player and of their stats when the edit page loaded.
+    const version: { player: string; stats: string | null } | undefined = data.version
+
+    if (version) {
+      const { data: currentStats } = await supabase
+        .from("player_stats")
+        .select("updated_at")
+        .eq("player_id", playerId)
+        .maybeSingle()
+      if ((currentStats?.updated_at ?? null) !== version.stats) return editConflictResponse()
+    }
 
     // Update player data. Note: player photos live in the separate
     // `player_images` table (linked via players.image_id), not an
     // `image_url` column on `players` — sending that field here 500s
     // with "Could not find the 'image_url' column".
-    const { error: playerError } = await supabase
+    let playerUpdate = supabase
       .from("players")
       .update({
         name: data.name,
@@ -35,10 +47,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         is_icon: data.is_icon,
       })
       .eq("id", playerId)
+    // Only saves if nobody changed the player since the page loaded.
+    if (version) playerUpdate = playerUpdate.eq("updated_at", version.player)
+    const { data: updatedPlayers, error: playerError } = await playerUpdate.select("id")
 
     if (playerError) {
       return NextResponse.json({ error: playerError.message }, { status: 500 })
     }
+    if (version && updatedPlayers.length === 0) return editConflictResponse()
 
     // Update player stats if provided. New players don't have a player_stats
     // row yet, so insert one the first time rather than silently no-op'ing

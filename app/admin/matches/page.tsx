@@ -37,6 +37,8 @@ interface MatchRow {
   location: string
   home_score: number | null
   away_score: number | null
+  /** Sent with a save, so it's refused if someone else changed the match meanwhile. */
+  updated_at: string
   homeTeamId: number
   awayTeamId: number
   homeTeamName: string
@@ -59,6 +61,7 @@ function mapRow(m: any): MatchRow {
     location: m.location,
     home_score: m.home_score,
     away_score: m.away_score,
+    updated_at: m.updated_at,
     homeTeamId: m.home_team?.id,
     awayTeamId: m.away_team?.id,
     homeTeamName: m.home_team?.name || "TBD",
@@ -172,20 +175,22 @@ export default function ManageMatches() {
       const response = await fetch(`/api/matches/${match.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ homeScore, awayScore, played: true }),
+        body: JSON.stringify({ homeScore, awayScore, played: true, version: match.updated_at }),
       })
 
+      const body = await response.json().catch(() => ({}))
       if (!response.ok) {
-        throw new Error("Failed to save result")
+        throw new Error(body.error || "Failed to save result")
       }
 
       toast({ title: "Result saved" })
+      const saved = { home_score: homeScore, away_score: awayScore, updated_at: body.match?.updated_at ?? match.updated_at }
 
       if (upcomingMatches.some((m) => m.id === match.id)) {
         // Moves from Upcoming to Previous Matches instead of just vanishing.
         const remaining = upcomingMatches.filter((m) => m.id !== match.id)
         setUpcomingMatches(remaining)
-        setPreviousMatches((prev) => [{ ...match, home_score: homeScore, away_score: awayScore }, ...prev])
+        setPreviousMatches((prev) => [{ ...match, ...saved }, ...prev])
         setExpandedIds((prev) => {
           const next = new Set(prev)
           next.delete(match.id)
@@ -194,13 +199,15 @@ export default function ManageMatches() {
           return next
         })
       } else {
-        setPreviousMatches((prev) =>
-          prev.map((m) => (m.id === match.id ? { ...m, home_score: homeScore, away_score: awayScore } : m)),
-        )
+        setPreviousMatches((prev) => prev.map((m) => (m.id === match.id ? { ...m, ...saved } : m)))
       }
     } catch (error) {
       console.error("Error saving result:", error)
-      toast({ title: "Failed to save result", description: "Please try again.", variant: "destructive" })
+      toast({
+        title: "Failed to save result",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setSavingResultId(null)
     }
@@ -212,16 +219,22 @@ export default function ManageMatches() {
       const response = await fetch(`/api/matches/${match.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ homeScore: null, awayScore: null, played: false }),
+        body: JSON.stringify({ homeScore: null, awayScore: null, played: false, version: match.updated_at }),
       })
 
+      const body = await response.json().catch(() => ({}))
       if (!response.ok) {
-        throw new Error("Failed to revert match")
+        throw new Error(body.error || "Failed to revert match")
       }
 
       toast({ title: "Moved back to Upcoming" })
 
-      const reverted = { ...match, home_score: null, away_score: null }
+      const reverted = {
+        ...match,
+        home_score: null,
+        away_score: null,
+        updated_at: body.match?.updated_at ?? match.updated_at,
+      }
       setResultDrafts((prev) => {
         const { [match.id]: _, ...rest } = prev
         return rest
@@ -238,7 +251,11 @@ export default function ManageMatches() {
       setExpandedIds((prev) => new Set(prev).add(match.id))
     } catch (error) {
       console.error("Error reverting match:", error)
-      toast({ title: "Failed to revert match", description: "Please try again.", variant: "destructive" })
+      toast({
+        title: "Failed to revert match",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setRevertingId(null)
     }
