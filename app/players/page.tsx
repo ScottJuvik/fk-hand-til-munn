@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { getPlayersPageData } from "@/actions/public-data"
+import { getPlayersPageData, getRecentStatChanges, type PlayerStatChangeItem } from "@/actions/public-data"
 import type { PlayerWithStats } from "@/types/supabase"
 import { PlayerCard } from "@/components/player-card"
 import { StatChangeTicker } from "@/components/stat-change-ticker"
@@ -35,6 +35,7 @@ const SectionDivider = () => (
 export default function PlayersPage() {
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState<PlayerWithStats[]>([])
+  const [statChanges, setStatChanges] = useState<PlayerStatChangeItem[]>([])
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedPosition, setSelectedPosition] = useState("All")
@@ -61,7 +62,12 @@ export default function PlayersPage() {
     async function fetchPlayers() {
       setLoading(true)
       try {
-        const { players: playersData, stats: statsData, images: imagesData, error } = await getPlayersPageData()
+        // The ticker's changes load with the players, so it appears together
+        // with the page instead of pushing it down a moment later.
+        const [{ players: playersData, stats: statsData, images: imagesData, error }, changes] = await Promise.all([
+          getPlayersPageData(),
+          getRecentStatChanges().catch(() => []),
+        ])
 
         if (error) throw new Error(error)
 
@@ -77,6 +83,7 @@ export default function PlayersPage() {
         }) as PlayerWithStats[]
 
         setPlayers(playersWithStats)
+        setStatChanges(changes)
       } catch (err) {
         console.error("Error fetching players:", err)
         setError("Failed to load player data. Please try again later.")
@@ -213,7 +220,7 @@ export default function PlayersPage() {
         </DialogContent>
       </Dialog>
 
-      <StatChangeTicker />
+      <StatChangeTicker changes={statChanges} />
 
       <div className="container mx-auto px-4 pt-12">
         <div className="max-w-6xl mx-auto">
