@@ -7,7 +7,7 @@ import { SignJWT, jwtVerify } from "jose"
 // 30 minutes after login (no sliding renewal), so nobody stays logged in
 // forever.
 
-export type SessionRole = "admin" | "user"
+export type SessionRole = "admin"
 
 export interface Session {
   role: SessionRole
@@ -40,7 +40,7 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
   if (!token) return null
   try {
     const { payload } = await jwtVerify(token, getSecret(), { algorithms: ["HS256"] })
-    if ((payload.role !== "admin" && payload.role !== "user") || typeof payload.exp !== "number") {
+    if (payload.role !== "admin" || typeof payload.exp !== "number") {
       return null
     }
     return { role: payload.role, expiresAt: payload.exp * 1000 }
