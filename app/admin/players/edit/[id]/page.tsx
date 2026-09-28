@@ -22,10 +22,12 @@ import { useAuth } from "@/components/auth-provider"
 import { StatInput } from "@/components/admin/stat-input"
 import { DetailedStatInputs } from "@/components/admin/detailed-stat-inputs"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { useToast } from "@/hooks/use-toast"
 
 export default function EditPlayer({ params }: { params: { id: string } }) {
   const router = useRouter()
   const { userRole } = useAuth()
+  const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [player, setPlayer] = useState<PlayerWithStats | null>(null)
@@ -241,13 +243,19 @@ export default function EditPlayer({ params }: { params: { id: string } }) {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to update player")
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || "Failed to update player")
       }
 
+      toast({ title: "Player updated", description: `${formData.name} was saved.` })
       router.push("/admin/players")
     } catch (error) {
       console.error("Error updating player:", error)
-      alert("Failed to update player. Please try again.")
+      toast({
+        title: "Failed to update player",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsSaving(false)
     }
