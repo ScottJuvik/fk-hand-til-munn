@@ -1,13 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { ArrowDown, ArrowUp } from "lucide-react"
-import { getRecentStatChanges, type PlayerStatChangeItem } from "@/actions/public-data"
+import type { PlayerStatChangeItem } from "@/actions/public-data"
 import { STAT_LABELS } from "@/lib/player-stat-changes"
 
 // Scrolling strip at the top of /players with the rating and stat changes
 // from the last 24 hours. Database triggers record every change, however
-// it's made (supabase/player-stat-changes.sql). Hidden when there are none.
+// it's made (supabase/player-stat-changes.sql). The page loads the changes
+// together with the players, so the strip doesn't shift the page when it
+// appears. Hidden when there are none.
 
 const SECONDS_PER_ITEM = 5
 // A short list is repeated up to this many items, so it fills a wide screen.
@@ -80,13 +81,7 @@ function TickerItem({ change }: { change: PlayerStatChangeItem }) {
   )
 }
 
-export function StatChangeTicker() {
-  const [changes, setChanges] = useState<PlayerStatChangeItem[]>([])
-
-  useEffect(() => {
-    getRecentStatChanges().then(setChanges).catch(() => setChanges([]))
-  }, [])
-
+export function StatChangeTicker({ changes }: { changes: PlayerStatChangeItem[] }) {
   if (changes.length === 0) return null
 
   const repeats = Math.ceil(MIN_ITEMS / changes.length)
