@@ -4,6 +4,14 @@ The website for FK Hånd til Munn, a Norwegian amateur football club, and for Ba
 
 **Live:** [fkhandtilmunn.com](https://fkhandtilmunn.com)
 
+![Home page](docs/screenshots/home.jpg)
+
+| Matchday lineup | Squad |
+|---|---|
+| ![Lineup on the pitch with formation and chemistry](docs/screenshots/lineup.jpg) | ![Players as FIFA-style cards](docs/screenshots/players.jpg) |
+| **Player statistics** | **Band til Munn** |
+| ![Sortable player statistics per league](docs/screenshots/statistics.jpg) | ![Band page](docs/screenshots/band.jpg) |
+
 ## Features
 
 **For fans**
