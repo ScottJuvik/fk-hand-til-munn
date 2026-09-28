@@ -12,7 +12,7 @@ import { calculateCleanSheets } from "@/utils/calculate-clean-sheets"
 // winner is marked as champions.
 const LEAGUE_EXTRAS: Record<number, { note?: string; champions?: boolean }> = {
   1: {
-    note: "* FK Hånd til Munn are placed above Omega FK after winning the head-to-head (innbyrdes oppgjør) 3–2.",
+    note: "* FK Hånd til Munn became champions after winning the head-to-head (innbyrdes oppgjør) against Omega FK 3–2.",
     champions: true,
   },
 }
