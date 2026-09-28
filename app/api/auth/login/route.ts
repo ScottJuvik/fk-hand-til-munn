@@ -11,7 +11,6 @@ import {
 // Credentials live in .env.local (server only), never in browser code.
 const ACCOUNTS: { role: SessionRole; usernameEnv: string; passwordEnv: string }[] = [
   { role: "admin", usernameEnv: "ADMIN_USERNAME", passwordEnv: "ADMIN_PASSWORD" },
-  { role: "user", usernameEnv: "USER_USERNAME", passwordEnv: "USER_PASSWORD" },
 ]
 
 // Hash both sides so the comparison is constant-time regardless of length.

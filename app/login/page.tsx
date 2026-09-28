@@ -33,10 +33,10 @@ export default function LoginPage() {
   }, [])
 
   // Only follow same-site paths, never absolute URLs (open-redirect safety).
-  const getNextPath = (role: string | null | undefined) => {
+  const getNextPath = () => {
     const next = new URLSearchParams(window.location.search).get("next")
     if (next && next.startsWith("/") && !next.startsWith("//")) return next
-    return role === "admin" ? "/admin/dashboard" : "/lineup"
+    return "/admin/dashboard"
   }
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,11 +49,10 @@ export default function LoginPage() {
     const password = formData.get("password") as string
 
     try {
-      // backend decides whether it's user or admin
       const result = await login(username, password)
 
       if (result.success) {
-        router.push(getNextPath(result.role))
+        router.push(getNextPath())
       } else {
         setError(result.error || "Invalid username or password")
       }
