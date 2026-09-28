@@ -86,12 +86,20 @@ const config = {
           "42%": { strokeDashoffset: "-75", opacity: "0" },
           "100%": { strokeDashoffset: "-75", opacity: "0" },
         },
+        // Stat change ticker on /players (stat-change-ticker.tsx): the list is
+        // rendered twice, so moving by half the width loops without a jump.
+        ticker: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "card-shine": "card-shine 6s ease-in-out 0.4s infinite",
         "chem-meet": "chem-meet 6s ease-in-out infinite",
+        // Duration is set inline from the number of items.
+        ticker: "ticker 60s linear infinite",
       },
     },
   },
