@@ -13,6 +13,7 @@ import type { NewsArticle } from "@/data/news";
 import type { TeamStats, TopScorer } from "@/actions/get-team-statistics";
 import { PartnerBanner } from "@/components/partner-banner";
 import { IntroSplash } from "@/components/intro-splash";
+import { NewArticleNotice } from "@/components/new-article-notice";
 import { ValueCard } from "@/components/value-card";
 import { calculateCleanSheets } from "@/utils/calculate-clean-sheets";
 
@@ -23,6 +24,7 @@ export default function HomePage() {
   const [activeLeague, setActiveLeague] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [introDone, setIntroDone] = useState(false);
 
   // Fetch initial data
   useEffect(() => {
@@ -126,7 +128,9 @@ export default function HomePage() {
 
   return (
     <>
-      <IntroSplash ready={!isLoading} />
+      <IntroSplash ready={!isLoading} onFinish={() => setIntroDone(true)} />
+      {/* Waits for the splash, so it slides in over the page rather than behind it. */}
+      <NewArticleNotice articles={newsArticles} enabled={introDone && !isLoading} />
       <div className="flex flex-col min-h-screen">
         {/* Hero Section - Full Screen Team Photo */}
         {/* On desktop, cap height at the image's aspect ratio so tall windows

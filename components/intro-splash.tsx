@@ -36,7 +36,7 @@ function makeConfetti(): ConfettiPiece[] {
   }));
 }
 
-export function IntroSplash({ ready = true }: { ready?: boolean }) {
+export function IntroSplash({ ready = true, onFinish }: { ready?: boolean; onFinish?: () => void }) {
   const [minDurationElapsed, setMinDurationElapsed] = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
   const [mounted, setMounted] = useState(true);
@@ -69,6 +69,12 @@ export function IntroSplash({ ready = true }: { ready?: boolean }) {
     const t = setTimeout(() => setMounted(false), FADE_DURATION);
     return () => clearTimeout(t);
   }, [fadingOut]);
+
+  // Tells the page once the splash is gone, or skipped because it already played.
+  useEffect(() => {
+    if (!mounted) onFinish?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted]);
 
   useEffect(() => {
     document.body.style.overflow = mounted ? "hidden" : "";
