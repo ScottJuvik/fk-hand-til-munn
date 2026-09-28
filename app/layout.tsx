@@ -11,18 +11,32 @@ import { cookies } from "next/headers"
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth"
 import { INTRO_SEEN_SCRIPT } from "@/lib/intro-seen"
 import { Analytics } from "@vercel/analytics/next"
+import { SITE_NAME, SITE_URL } from "@/lib/site"
 
 const inter = Inter({ subsets: ["latin"] })
 
+// The icons come from app/favicon.ico, app/icon.png and app/apple-icon.png,
+// which Next.js links with their sizes (what Google needs for the icon next
+// to the site in search results).
 export const metadata = {
-  title: "FK Hånd til Munn",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
   description: "Official website of FK Hånd til Munn",
     generator: 'v0.app',
-  icons: {
-    icon: "/logos/club/htm-logo-round.png",
-    apple: "/logos/club/htm-logo-round.png",
-  },
 }
+
+// Tells search engines the site's name and logo (shown next to it in results).
+const STRUCTURED_DATA = [
+  { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsTeam",
+    name: SITE_NAME,
+    sport: "Soccer",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logos/club/htm-logo-round.png`,
+  },
+]
 
 export default async function RootLayout({
   children,
@@ -38,6 +52,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: INTRO_SEEN_SCRIPT }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }} />
       </head>
       <body className={inter.className}>
         <AuthProvider initialSession={session}>
