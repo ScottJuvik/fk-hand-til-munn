@@ -102,7 +102,7 @@ export function NewArticleNotice({ articles, enabled }: { articles: NewsArticle[
           onClick={markSeen}
           tabIndex={visible ? 0 : -1}
           aria-label="Dismiss"
-          className="absolute right-2 top-2 z-10 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+          className="absolute right-2 top-2 z-10 rounded-full p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
         >
           <X className="h-4 w-4" />
         </button>
