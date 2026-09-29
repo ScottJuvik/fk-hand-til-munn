@@ -65,36 +65,44 @@ export function NewArticleNotice({ articles, enabled }: { articles: NewsArticle[
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
       }`}
     >
-      <div className="relative flex gap-4 overflow-hidden rounded-2xl bg-white p-3 pr-10 shadow-2xl ring-1 ring-black/5">
-        <div className="absolute inset-y-0 left-0 w-1 bg-[#D4AF37]" aria-hidden="true" />
-        <img
-          src={article.image}
-          alt=""
-          className="h-20 w-20 shrink-0 rounded-xl object-cover"
-        />
-        <div className="min-w-0 flex-1 py-0.5">
-          <div className="mb-1 flex items-center gap-2 text-xs">
-            <span className="rounded-full bg-[#D4AF37] px-2 py-0.5 font-bold uppercase tracking-wider text-black">
-              New article
-            </span>
-            <span className="text-gray-500">{daysAgo(article.createdAt!)}</span>
+      {/* The whole card is the link; the dismiss button sits on top of it,
+          outside the link, so closing never opens the article. The lift is
+          on this wrapper so the button moves with the card. */}
+      <div className="group relative transition-transform duration-200 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+        <Link
+          href={`/news/${article.id}`}
+          onClick={markSeen}
+          tabIndex={visible ? 0 : -1}
+          className="relative flex gap-4 overflow-hidden rounded-2xl bg-white p-3 pr-10 shadow-2xl ring-1 ring-black/5 transition duration-200 group-hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)] group-hover:ring-[#D4AF37]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+        >
+          <div className="absolute inset-y-0 left-0 w-1 bg-[#D4AF37] transition-all duration-200 group-hover:w-1.5" aria-hidden="true" />
+          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl">
+            <img
+              src={article.image}
+              alt=""
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none"
+            />
           </div>
-          <p className="mb-2 line-clamp-2 font-semibold leading-snug text-gray-900">{article.title}</p>
-          <Link
-            href={`/news/${article.id}`}
-            onClick={markSeen}
-            tabIndex={visible ? 0 : -1}
-            className="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-[#B8962E]"
-          >
-            Read article <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+          <div className="min-w-0 flex-1 py-0.5">
+            <div className="mb-1 flex items-center gap-2 text-xs">
+              <span className="rounded-full bg-[#D4AF37] px-2 py-0.5 font-bold uppercase tracking-wider text-black">
+                New article
+              </span>
+              <span className="text-gray-500">{daysAgo(article.createdAt!)}</span>
+            </div>
+            <p className="mb-2 line-clamp-2 font-semibold leading-snug text-gray-900">{article.title}</p>
+            <span className="inline-flex items-center gap-1 text-sm font-semibold text-black transition-colors group-hover:text-[#B8962E]">
+              Read article
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </span>
+          </div>
+        </Link>
         <button
           type="button"
           onClick={markSeen}
           tabIndex={visible ? 0 : -1}
           aria-label="Dismiss"
-          className="absolute right-2 top-2 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+          className="absolute right-2 top-2 z-10 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
         >
           <X className="h-4 w-4" />
         </button>
