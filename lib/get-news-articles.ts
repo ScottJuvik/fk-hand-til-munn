@@ -24,6 +24,7 @@ function mapRow(row: NewsArticleRow): NewsArticle {
     content: row.content,
     date: formatDate(row.published_at),
     publishedAt: row.published_at,
+    createdAt: row.created_at,
     image: row.image || "/placeholder.svg",
     author: row.author || "FK Hånd til Munn",
     isFeatured: row.is_featured,
