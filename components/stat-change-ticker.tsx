@@ -5,7 +5,7 @@ import type { PlayerStatChangeItem } from "@/actions/public-data"
 import { STAT_LABELS } from "@/lib/player-stat-changes"
 
 // Scrolling strip at the top of /players with the rating and stat changes
-// from the last 24 hours. Database triggers record every change, however
+// from the last 7 days. Database triggers record every change, however
 // it's made (supabase/player-stat-changes.sql). The page loads the changes
 // together with the players, so the strip doesn't shift the page when it
 // appears. Hidden when there are none.
@@ -14,12 +14,13 @@ const SECONDS_PER_ITEM = 5
 // A short list is repeated up to this many items, so it fills a wide screen.
 const MIN_ITEMS = 12
 
-// Every change is under 24 hours old, so minutes and hours are enough.
+// Every change is under a week old, so days are the largest unit needed.
 function timeAgo(iso: string) {
   const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000)
   if (minutes < 1) return "just now"
   if (minutes < 60) return `${minutes}m ago`
-  return `${Math.floor(minutes / 60)}h ago`
+  if (minutes < 24 * 60) return `${Math.floor(minutes / 60)}h ago`
+  return `${Math.floor(minutes / (24 * 60))}d ago`
 }
 
 function TickerItem({ change }: { change: PlayerStatChangeItem }) {
