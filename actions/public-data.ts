@@ -95,10 +95,10 @@ export interface PlayerStatChangeItem {
   created_at: string
 }
 
-/** Player stat changes from the last 24 hours, newest first, for the ticker on /players. */
+/** Player stat changes from the last 7 days, newest first, for the ticker on /players. */
 export async function getRecentStatChanges(limit = 30): Promise<PlayerStatChangeItem[]> {
   const supabase = createServerSupabaseClient()
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
   const { data, error } = await supabase
     .from("player_stat_changes")
     .select("id, player_id, stat, old_value, new_value, created_at, player:player_id(name)")
