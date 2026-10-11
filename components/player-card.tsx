@@ -36,6 +36,8 @@ interface IconCard {
   // Where the flag sits, for art whose printed club crest isn't in the usual spot (default 35%).
   flagLeft?: string
   artInset?: string
+  // Smaller version without the stat row, for the lineup pitch (squad special cards only).
+  miniImage?: string
 }
 
 // Visible card art inside the image's transparent padding (top, sides, bottom).
@@ -112,16 +114,44 @@ const SPECIAL_ICON_CARDS: Record<number, IconCard> = {
   50: MID_ICON, // Haakon 'Heiken' IL Lunde
 }
 
+// FIFA 26 Team of the Week: black with gold trim and a silhouette printed on it. The art
+// already has the league logo, club crest and stat labels, so only the gold text is drawn.
+const TOTW_GOLD = "#F3DA95"
+const TOTW: IconCard = {
+  image: "/images/cards/special/totw.webp",
+  miniImage: "/images/cards/special/totw-mini.webp",
+  textColor: TOTW_GOLD,
+  topTextColor: TOTW_GOLD,
+  statCentres: [19.6, 31.7, 44.0, 56.1, 68.4, 80.7],
+  artInset: MARBLE_ART_INSET,
+}
+
+// Current squad players with a special card instead of the one for their rating, by player id.
+const SPECIAL_SQUAD_CARDS: Record<number, IconCard> = {
+  41: TOTW, // Andreas 'Bjønnis' Bjønness
+}
+
 // Icons get their special card or the baby icon card; the current squad
-// gets a card by rating.
+// gets their special card, if any, or a card by rating (null).
 function getIconCard(player: PlayerWithStats) {
-  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : null
+  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : SPECIAL_SQUAD_CARDS[player.id] ?? null
 }
 
 /** The card art a player is shown with, e.g. "/images/cards/templates/rare-gold.webp". */
 export function getPlayerCardImage(player: PlayerWithStats) {
   const iconCard = getIconCard(player)
   return iconCard ? iconCard.image : getFifaCardForRating(player.rating)
+}
+
+/** Whether the player currently has the Team of the Week card. */
+export function hasTotwCard(player: PlayerWithStats) {
+  return getIconCard(player) === TOTW
+}
+
+/** The special mini card for a squad player on the lineup pitch, or null to use the one for their rating. */
+export function getSpecialMiniCard(player: PlayerWithStats) {
+  const card = player.is_icon ? null : SPECIAL_SQUAD_CARDS[player.id]
+  return card?.miniImage ? { image: card.miniImage, textColor: card.textColor } : null
 }
 
 export function PlayerCard({ player, showDetails = true }: PlayerCardProps) {

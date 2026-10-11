@@ -424,6 +424,17 @@ const THEMES: Record<string, CardTheme> = {
     subtle: true,
     wash: [0.3, 0.05],
   },
+  // Team of the Week: gold silk over black. The wash is stronger than on the other squad
+  // cards so the dialog text stays readable over the dark card colours.
+  "totw.webp": {
+    background: [silk("rgba(243,218,149,0.95)", "rgba(0,0,0,0.5)"), GRAIN, metal("#3a3428", "#14120e", "#050505", "#2a2418")].join(", "),
+    border: "#c9a54a",
+    badge: { background: "linear-gradient(135deg, #2a2418, #050505)", color: "#f3da95" },
+    glow: "rgba(212,175,55,0.5)",
+    shine: true,
+    subtle: true,
+    frame: "inset 0 0 0 1px rgba(243,218,149,0.6)",
+  },
   "baby.webp": {
     background: [BABY_RIBBONS, MARBLE].join(", "),
     border: ROSE_GOLD_BORDER,
