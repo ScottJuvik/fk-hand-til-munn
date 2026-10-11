@@ -8,7 +8,7 @@ import { getMiniCardForRating } from "@/utils/fifa-card"
 import { formatShortPlayerName } from "@/utils/format-player-name"
 import type { PlayerWithStats } from "@/types/supabase"
 import { getFlagUrl } from "@/utils/flag-url"
-import { getPlayerCardImage } from "@/components/player-card"
+import { getPlayerCardImage, getSpecialMiniCard } from "@/components/player-card"
 import { getCardTheme, cardThemeDialogStyle, CardThemeShine, CARD_THEME_DIALOG_CLASS } from "@/components/card-theme-backdrop"
 
 // Same dark brown as the text on the full-size cards.
@@ -29,6 +29,10 @@ export function PlayerPitchCard({ player, showMainAttributes = false }: PlayerPi
   const useMiniCard = !player.is_icon
   const miniCardName = formatShortPlayerName(player.name, player.nickname)
   const cardTheme = getCardTheme(getPlayerCardImage(player))
+  // A squad player's special card, if it has a mini version, replaces the rating tier card.
+  const specialMiniCard = getSpecialMiniCard(player)
+  const miniCardSrc = specialMiniCard?.image ?? getMiniCardForRating(player.rating)
+  const miniCardText = specialMiniCard?.textColor ?? MINI_CARD_TEXT
 
   return (
     <>
@@ -46,16 +50,16 @@ export function PlayerPitchCard({ player, showMainAttributes = false }: PlayerPi
             {/* Card art and overlays scale up together on hover, like on the Players page. */}
             <div className="absolute inset-0 transition-transform duration-300 group-hover:scale-110">
               <img
-                src={getMiniCardForRating(player.rating)}
+                src={miniCardSrc}
                 alt={player.name}
                 className="absolute inset-0 w-full h-full object-contain"
               />
               {showMainAttributes && (
                 <>
-                  <div className="absolute top-[19%] left-[14%] font-bold text-sm leading-none z-10" style={{ color: MINI_CARD_TEXT }}>
+                  <div className="absolute top-[19%] left-[14%] font-bold text-sm leading-none z-10" style={{ color: miniCardText }}>
                     {player.rating}
                   </div>
-                  <div className="absolute top-[29%] left-[14%] font-bold text-[0.5rem] leading-none z-10" style={{ color: MINI_CARD_TEXT }}>
+                  <div className="absolute top-[29%] left-[14%] font-bold text-[0.5rem] leading-none z-10" style={{ color: miniCardText }}>
                     {player.position.toUpperCase()}
                   </div>
                 </>
@@ -63,7 +67,7 @@ export function PlayerPitchCard({ player, showMainAttributes = false }: PlayerPi
               {/* Centred in the band below the crests, before the card tapers to its point. */}
               <div
                 className="absolute top-[84%] inset-x-[14%] -translate-y-1/2 truncate text-center font-bold text-[0.55rem] leading-none z-10"
-                style={{ color: MINI_CARD_TEXT }}
+                style={{ color: miniCardText }}
               >
                 {miniCardName}
               </div>

@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo } from "react"
 import { getPlayersPageData, getRecentStatChanges, type PlayerStatChangeItem } from "@/actions/public-data"
 import type { PlayerWithStats } from "@/types/supabase"
-import { PlayerCard } from "@/components/player-card"
+import { PlayerCard, hasTotwCard } from "@/components/player-card"
+import { TotwReveal } from "@/components/totw-reveal"
 import { StatChangeTicker } from "@/components/stat-change-ticker"
 import { AlertCircle, Search } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -142,6 +143,14 @@ export default function PlayersPage() {
     </div>
   )
 
+  // The Team of the Week walkout plays over the page, unless it was opened to show a
+  // specific player or the icons.
+  const totwPlayer = useMemo(() => {
+    const params = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search)
+    if (params.has("player") || params.get("view") === "icons") return null
+    return players.find((p) => !p.is_icon && hasTotwCard(p)) ?? null
+  }, [players])
+
   const positions = ["All", "GK", "Defender", "Midfielder", "Attacker"]
 
   // ---------- FILTERED PLAYERS (client-side, in-memory) ----------
@@ -208,6 +217,8 @@ export default function PlayersPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-12">
+      {totwPlayer && <TotwReveal player={totwPlayer} />}
+
       <Dialog open={missingCard !== null} onOpenChange={(open) => !open && setMissingCard(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
