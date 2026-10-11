@@ -24,6 +24,8 @@ interface CardTheme {
    * out and show their theme at full strength.
    */
   subtle?: boolean
+  /** Dark background, so the dialog content switches to light text and dark glass. */
+  dark?: boolean
   /** How much white the wash adds [in the middle, at the edges]; defaults to [0.82, 0.62]. */
   wash?: [number, number]
 }
@@ -424,16 +426,21 @@ const THEMES: Record<string, CardTheme> = {
     subtle: true,
     wash: [0.3, 0.05],
   },
-  // Team of the Week: gold silk over black. The wash is stronger than on the other squad
-  // cards so the dialog text stays readable over the dark card colours.
+  // Team of the Week: black like the card, with its gold light streaks and trim.
   "totw.webp": {
-    background: [silk("rgba(243,218,149,0.95)", "rgba(0,0,0,0.5)"), GRAIN, metal("#3a3428", "#14120e", "#050505", "#2a2418")].join(", "),
-    border: "#c9a54a",
-    badge: { background: "linear-gradient(135deg, #2a2418, #050505)", color: "#f3da95" },
+    background: [
+      silk("rgba(243,218,149,0.55)", "rgba(0,0,0,0.6)"),
+      GRAIN,
+      "radial-gradient(ellipse 60% 50% at 85% 10%, rgba(212,175,55,0.28), transparent 70%)",
+      "radial-gradient(ellipse 55% 45% at 10% 95%, rgba(212,175,55,0.16), transparent 70%)",
+      "linear-gradient(160deg, #1d1a14 0%, #0b0a08 45%, #000000 100%)",
+    ].join(", "),
+    border: "#d4af37",
+    badge: { background: "linear-gradient(135deg, #2a2418, #000000)", color: "#f3da95" },
     glow: "rgba(212,175,55,0.5)",
     shine: true,
-    subtle: true,
-    frame: "inset 0 0 0 1px rgba(243,218,149,0.6)",
+    dark: true,
+    frame: "inset 0 0 0 4px rgba(0,0,0,0.6), inset 0 0 0 6px #d4af37, inset 0 0 0 7px rgba(243,218,149,0.35)",
   },
   "baby.webp": {
     background: [BABY_RIBBONS, MARBLE].join(", "),
@@ -543,6 +550,9 @@ const wash = ([middle, edges]: [number, number] = [0.82, 0.62]) =>
  * the top on each screen size (only nudged down on desktop).
  */
 export const CARD_THEME_DIALOG_CLASS = "[--silk-y:0px] md:[--silk-y:30px]"
+
+/** Extra dialog classes for dark themes: the close button in light gold instead of dark grey. */
+export const DARK_THEME_DIALOG_CLASS = "[&>button]:!bg-transparent [&>button]:!text-[#F3DA95]"
 
 /** Inline styles for the dialog box itself. */
 export function cardThemeDialogStyle(theme: CardTheme): CSSProperties {

@@ -9,7 +9,7 @@ import { formatShortPlayerName } from "@/utils/format-player-name"
 import type { PlayerWithStats } from "@/types/supabase"
 import { getFlagUrl } from "@/utils/flag-url"
 import { getPlayerCardImage, getSpecialMiniCard } from "@/components/player-card"
-import { getCardTheme, cardThemeDialogStyle, CardThemeShine, CARD_THEME_DIALOG_CLASS } from "@/components/card-theme-backdrop"
+import { getCardTheme, cardThemeDialogStyle, CardThemeShine, CARD_THEME_DIALOG_CLASS, DARK_THEME_DIALOG_CLASS } from "@/components/card-theme-backdrop"
 
 // Same dark brown as the text on the full-size cards.
 const MINI_CARD_TEXT = "#2D2410"
@@ -141,9 +141,9 @@ export function PlayerPitchCard({ player, showMainAttributes = false }: PlayerPi
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {/* Same width as the Players page dialog; no padding here since the stats inside pad themselves */}
-        <DialogContent className={`max-w-4xl p-0 ${CARD_THEME_DIALOG_CLASS}`} style={cardThemeDialogStyle(cardTheme)}>
+        <DialogContent className={`max-w-4xl p-0 ${CARD_THEME_DIALOG_CLASS} ${cardTheme.dark ? DARK_THEME_DIALOG_CLASS : ""}`} style={cardThemeDialogStyle(cardTheme)}>
           <CardThemeShine theme={cardTheme} />
-          <PlayerCardDetailedStats player={player} badgeStyle={{ ...cardTheme.badge, borderColor: cardTheme.border }} />
+          <PlayerCardDetailedStats player={player} badgeStyle={{ ...cardTheme.badge, borderColor: cardTheme.border }} dark={cardTheme.dark} />
         </DialogContent>
       </Dialog>
     </>

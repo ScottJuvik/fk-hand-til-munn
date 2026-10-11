@@ -4,11 +4,12 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { formatPlayerName } from "@/utils/format-player-name"
 import { getFifaCardForRating } from "@/utils/fifa-card"
+import { isTeamOfTheWeek } from "@/utils/totw"
 import type { PlayerWithStats } from "@/types/supabase"
 import { getFlagUrl } from "@/utils/flag-url"
 import { getCountryCode } from "@/utils/country-code"
 import { PlayerCardDetailedStats } from "@/components/player-card-detailed-stats"
-import { getCardTheme, cardThemeDialogStyle, CardThemeShine, CARD_THEME_DIALOG_CLASS } from "@/components/card-theme-backdrop"
+import { getCardTheme, cardThemeDialogStyle, CardThemeShine, CARD_THEME_DIALOG_CLASS, DARK_THEME_DIALOG_CLASS } from "@/components/card-theme-backdrop"
 
 interface PlayerCardProps {
   player: PlayerWithStats
@@ -126,15 +127,16 @@ const TOTW: IconCard = {
   artInset: MARBLE_ART_INSET,
 }
 
-// Current squad players with a special card instead of the one for their rating, by player id.
-const SPECIAL_SQUAD_CARDS: Record<number, IconCard> = {
-  41: TOTW, // Andreas 'Bjønnis' Bjønness
+// Current squad players with a special card instead of the one for their rating: the
+// Team of the Week (picked in utils/totw.ts) while their week lasts.
+function getSquadSpecialCard(player: PlayerWithStats) {
+  return isTeamOfTheWeek(player.id) ? TOTW : null
 }
 
 // Icons get their special card or the baby icon card; the current squad
 // gets their special card, if any, or a card by rating (null).
 function getIconCard(player: PlayerWithStats) {
-  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : SPECIAL_SQUAD_CARDS[player.id] ?? null
+  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : getSquadSpecialCard(player)
 }
 
 /** The card art a player is shown with, e.g. "/images/cards/templates/rare-gold.webp". */
@@ -150,7 +152,7 @@ export function hasTotwCard(player: PlayerWithStats) {
 
 /** The special mini card for a squad player on the lineup pitch, or null to use the one for their rating. */
 export function getSpecialMiniCard(player: PlayerWithStats) {
-  const card = player.is_icon ? null : SPECIAL_SQUAD_CARDS[player.id]
+  const card = player.is_icon ? null : getSquadSpecialCard(player)
   return card?.miniImage ? { image: card.miniImage, textColor: card.textColor } : null
 }
 
@@ -305,7 +307,7 @@ export function PlayerCard({ player, showDetails = true }: PlayerCardProps) {
       {showDetails && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent
-            className={`max-w-4xl p-0 ${CARD_THEME_DIALOG_CLASS}`}
+            className={`max-w-4xl p-0 ${CARD_THEME_DIALOG_CLASS} ${cardTheme.dark ? DARK_THEME_DIALOG_CLASS : ""}`}
             style={cardThemeDialogStyle(cardTheme)}
           >
             <CardThemeShine theme={cardTheme} />
@@ -317,6 +319,7 @@ export function PlayerCard({ player, showDetails = true }: PlayerCardProps) {
               player={player}
               badgeStyle={{ ...cardTheme.badge, borderColor: cardTheme.border }}
               photoSrc={player.image_url || "/images/players/messi.jpg"}
+              dark={cardTheme.dark}
             />
           </DialogContent>
         </Dialog>

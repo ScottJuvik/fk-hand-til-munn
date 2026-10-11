@@ -15,6 +15,8 @@ interface PlayerCardDetailedStatsProps {
   badgeStyle?: CSSProperties
   /** Player photo; falls back to the Messi photo if it doesn't load. Defaults to the lineup's photo path. */
   photoSrc?: string
+  /** Light text and dark glass, for card themes with a dark background (e.g. Team of the Week). */
+  dark?: boolean
 }
 
 type StatKey = keyof PlayerWithStats["stats"]
@@ -63,13 +65,18 @@ const DETAILED_STATS: [string, StatKey][][] = [
   ],
 ]
 
-export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: PlayerCardDetailedStatsProps) {
+export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc, dark = false }: PlayerCardDetailedStatsProps) {
+  // Colours that change with a dark background: secondary text, the glass panels and
+  // their headings, the divider, the stat bar tracks and the position links.
+  const muted = dark ? "text-[#F3DA95]/75" : "text-gray-600"
+  const glass = dark ? "bg-black/45 ring-[#F3DA95]/25" : "bg-white/55 ring-white/60"
+  const heading = dark ? "text-[#F3DA95]" : ""
   const displayName = player.nickname ? formatPlayerName(player.name, player.nickname) : player.name
   const playercardUrl = (player as PlayerWithStats & { playercard_url?: string }).playercard_url
   const playerImageSrc = photoSrc ?? (playercardUrl || "/images/players/messi.jpg")
 
   return (
-    <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 p-6 md:p-8 md:overflow-y-visible md:max-h-none overflow-y-auto max-h-[90vh]">
+    <div className={`relative grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 p-6 md:p-8 md:overflow-y-visible md:max-h-none overflow-y-auto max-h-[90vh] ${dark ? "text-white" : ""}`}>
       <div className="flex flex-col items-center text-center">
         <div className="relative mb-4">
           <div
@@ -94,7 +101,7 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
           />
         </div>
         <h3 className="font-bold text-2xl mb-1">{displayName}</h3>
-        <div className="text-sm text-gray-600 mb-4">
+        <div className={`text-sm mb-4 ${muted}`}>
           {player.position}
         </div>
         <div className="grid grid-cols-1 gap-2 text-sm w-full max-w-[200px]">
@@ -122,25 +129,25 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
           </div>
           <div className="flex flex-col items-center  p-2 rounded">
             <span className="font-bold text-xl">#{player.shirt_number ?? "N/A"}</span>
-            <span className="text-xs text-gray-600">Shirt No.</span>
+            <span className={`text-xs ${muted}`}>Shirt No.</span>
           </div>
         </div>
 
-        <div className="mt-4 p-3 rounded-lg w-full max-w-[200px] bg-white/55 backdrop-blur-sm ring-1 ring-white/60 shadow-sm">
-          <h4 className="font-medium text-center mb-2">Work Rate</h4>
+        <div className={`mt-4 p-3 rounded-lg w-full max-w-[200px] backdrop-blur-sm ring-1 shadow-sm ${glass}`}>
+          <h4 className={`font-medium text-center mb-2 ${heading}`}>Work Rate</h4>
           <div className="flex justify-between text-sm">
             <div>
-              <span className="text-gray-600">Attacking:</span>{" "}
+              <span className={muted}>Attacking:</span>{" "}
               <span className="font-medium">{player.attacking_work_rate || "Medium"}</span>
             </div>
             <div>
-              <span className="text-gray-600">Defensive:</span>{" "}
+              <span className={muted}>Defensive:</span>{" "}
               <span className="font-medium">{player.defensive_work_rate || "Medium"}</span>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 p-3 rounded-lg w-full max-w-xs bg-white/55 backdrop-blur-sm ring-1 ring-white/60 shadow-sm">
+        <div className={`mt-4 p-3 rounded-lg w-full max-w-xs backdrop-blur-sm ring-1 shadow-sm ${glass}`}>
           <div className="flex justify-around">
             <div className="flex flex-col items-center">
               <div className="text-sm font-medium mb-1">Weak Foot</div>
@@ -153,13 +160,13 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
           </div>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-black/10 w-full flex justify-between items-end gap-4">
+        <div className={`mt-6 pt-4 border-t w-full ${dark ? "border-[#F3DA95]/20" : "border-black/10"} flex justify-between items-end gap-4`}>
           {player.alternate_positions && (
             <div className="flex-1 text-left">
-              <div className="text-sm text-gray-600 font-bold mb-1">Alternate Positions</div>
+              <div className={`text-sm font-bold mb-1 ${muted}`}>Alternate Positions</div>
               <div className="flex flex-wrap gap-1">
                 {player.alternate_positions.split(",").map((pos, index) => (
-                  <span key={index} className="text-sm text-blue-600 cursor-pointer">
+                  <span key={index} className={`text-sm cursor-pointer ${dark ? "text-sky-300" : "text-blue-600"}`}>
                     {pos.trim()}
                   </span>
                 ))}
@@ -169,7 +176,7 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
 
           {player.specialties && (
             <div className="flex-1 text-center">
-              <div className="text-sm text-center text-gray-600 font-bold mb-1">Specialties</div>
+              <div className={`text-sm text-center font-bold mb-1 ${muted}`}>Specialties</div>
               <SpecialtiesBadge specialties={player.specialties} className="justify-center" />
             </div>
           )}
@@ -177,8 +184,8 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
       </div>
 
       {/* Frosted glass so the stats stay readable over the card theme */}
-      <div className="rounded-xl bg-white/60 backdrop-blur-md ring-1 ring-white/70 shadow-sm p-4 md:p-5">
-        <h4 className="font-bold text-lg mb-2">Main Attributes</h4>
+      <div className={`rounded-xl backdrop-blur-md ring-1 shadow-sm p-4 md:p-5 ${dark ? "bg-black/50 ring-[#F3DA95]/25" : "bg-white/60 ring-white/70"}`}>
+        <h4 className={`font-bold text-lg mb-2 ${heading}`}>Main Attributes</h4>
         <div className="grid grid-cols-2 gap-4 mb-6">
           {MAIN_STATS.map(([label, key]) => (
             <div key={key}>
@@ -186,7 +193,7 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
                 <span>{label}</span>
                 <span className={`${getStatColor(player.stats[key])} px-2 rounded`}>{player.stats[key]}</span>
               </div>
-              <div className="w-full bg-black/10 rounded-full h-2">
+              <div className={`w-full rounded-full h-2 ${dark ? "bg-white/15" : "bg-black/10"}`}>
                 <div
                   className={`${getStatColor(player.stats[key])} rounded-full h-2 transition-all duration-500`}
                   style={{ width: `${player.stats[key]}%` }}
@@ -196,7 +203,7 @@ export function PlayerCardDetailedStats({ player, badgeStyle, photoSrc }: Player
           ))}
         </div>
 
-        <h4 className="font-bold text-lg mb-2">Detailed Stats</h4>
+        <h4 className={`font-bold text-lg mb-2 ${heading}`}>Detailed Stats</h4>
         <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
           {DETAILED_STATS.map((column, index) => (
             <div key={index} className="flex flex-col space-y-2">
