@@ -2,8 +2,8 @@
 // To pick a new one, set the player and the Monday their week starts. The card
 // shows as soon as it is deployed and ends by itself after that Sunday.
 export const TEAM_OF_THE_WEEK = {
-  playerId: 34, // Elliot Skovly
-  weekStarting: "2026-10-26",
+  playerId: 63, // Mathias Gløckner
+  weekStarting: "2026-11-09",
 }
 
 const TIME_ZONE = "Europe/Oslo"
