@@ -148,7 +148,7 @@ export default function PlayersPage() {
   const totwPlayer = useMemo(() => {
     const params = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search)
     if (params.has("player") || params.get("view") === "icons") return null
-    return players.find((p) => !p.is_icon && hasTotwCard(p)) ?? null
+    return players.find((p) => hasTotwCard(p)) ?? null
   }, [players])
 
   const positions = ["All", "GK", "Defender", "Midfielder", "Attacker"]

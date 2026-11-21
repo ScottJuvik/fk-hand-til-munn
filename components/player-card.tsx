@@ -133,10 +133,11 @@ function getSquadSpecialCard(player: PlayerWithStats) {
   return isTeamOfTheWeek(player.id) ? TOTW : null
 }
 
-// Icons get their special card or the baby icon card; the current squad
-// gets their special card, if any, or a card by rating (null).
+// The Team of the Week card comes first, for icons too. Otherwise icons get their
+// special card or the baby icon card; the current squad gets a card by rating (null).
 function getIconCard(player: PlayerWithStats) {
-  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : getSquadSpecialCard(player)
+  if (isTeamOfTheWeek(player.id)) return TOTW
+  return player.is_icon ? SPECIAL_ICON_CARDS[player.id] ?? BABY_ICON : null
 }
 
 /** The card art a player is shown with, e.g. "/images/cards/templates/rare-gold.webp". */
